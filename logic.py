@@ -68,13 +68,13 @@ class LearningSystem:
         if action in self.positive_actions:
             points = self.positive_actions[action]
             self.add_points(points)
-            log_entry = f"行为: {action}, 积分变化: +{points}, 时间: {datetime.datetime.now()}\n"  # 增加时间字段
+            log_entry = f"行为: {action}, 积分变化: +{points}, 时间: {datetime.datetime.now().isoformat()}\n"  # 确保时间格式正确
             self.action_logs.append(log_entry)
             self.save_action_logs()  # 保存行为日志
         elif action in self.negative_actions:
             points = self.negative_actions[action]
             self.deduct_points(points)
-            log_entry = f"行为: {action}, 积分变化: {points}, 时间: {datetime.datetime.now()}\n"  # 增加时间字段
+            log_entry = f"行为: {action}, 积分变化: {points}, 时间: {datetime.datetime.now().isoformat()}\n"  # 确保时间格式正确
             self.action_logs.append(log_entry)
             self.save_action_logs()  # 保存行为日志
         else:

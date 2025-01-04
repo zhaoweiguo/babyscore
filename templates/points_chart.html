@@ -11,6 +11,16 @@
 <body>
     <h1>积分变化折线图</h1>
     <canvas id="pointsChart" width="400" height="200"></canvas>
+
+    <!-- 添加时间单位选择下拉菜单 -->
+    <label for="timeUnit">选择时间单位:</label>
+    <select name="timeUnit" id="timeUnit">
+        <option value="day">天</option>
+        <option value="hour">小时</option>
+        <option value="week">星期</option>
+        <option value="month">月</option>
+    </select>
+
     <script>
         // 获取行为日志数据
         const actionLogs = {{ action_logs|tojson }};

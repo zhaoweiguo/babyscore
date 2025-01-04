@@ -28,15 +28,6 @@
         <button type="submit">提交</button>
     </form>
 
-    <!-- 添加时间单位选择下拉菜单 -->
-    <label for="timeUnit">选择时间单位:</label>
-    <select name="timeUnit" id="timeUnit">
-        <option value="day">天</option>
-        <option value="hour">小时</option>
-        <option value="week">星期</option>
-        <option value="month">月</option>
-    </select>
-
     <h2>行为日志</h2>
     <ul id="actionLogs">
         {% for log in action_logs %}
@@ -157,15 +148,6 @@
                 chart.update();
             })
             .catch(error => console.error('Error:', error));
-        });
-
-        // 添加事件监听器以处理时间单位选择变化
-        document.getElementById('timeUnit').addEventListener('change', function(event) {
-            const selectedUnit = event.target.value;
-
-            // 更新图表的时间单位
-            chart.options.scales.x.time.unit = selectedUnit;
-            chart.update();
         });
     </script>
 </body>
