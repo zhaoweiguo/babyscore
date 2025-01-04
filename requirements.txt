@@ -1,0 +1,3 @@
+fastapi
+uvicorn
+# 添加其他可能需要的依赖项
