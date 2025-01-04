@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, jsonify
-
-# 导入业务逻辑模块
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 from logic import LearningSystem
+import uvicorn
 
-app = Flask(__name__)
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 # 创建全局的 LearningSystem 实例
 system = LearningSystem()
 
-@app.route('/')
-def show_status():
+@app.get("/", response_class=HTMLResponse)
+def show_status(request: Request):
     # 使用全局的 LearningSystem 实例
     current_level, current_sub_level, current_points = system.get_current_status().split(', ')
     current_level = current_level.split(': ')[1]
@@ -17,11 +19,10 @@ def show_status():
     current_points = current_points.split(': ')[1]
     # 传递行为日志列表到模板
     action_logs = system.action_logs
-    return render_template('status.html', current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
+    return templates.TemplateResponse("status.html", {"request": request, "current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
 
-@app.route('/handle_action', methods=['POST'])
-def handle_action():
-    action = request.form['action']
+@app.post("/handle_action", response_class=JSONResponse)
+async def handle_action(action: str = Form(...)):
     # 使用全局的 LearningSystem 实例
     system.handle_action(action)
     # 重新获取当前状态和行为日志
@@ -30,12 +31,7 @@ def handle_action():
     current_sub_level = current_sub_level.split(': ')[1]
     current_points = current_points.split(': ')[1]
     action_logs = system.action_logs  # 获取最新的行为日志
-    return jsonify({
-        'current_level': current_level,
-        'current_sub_level': current_sub_level,
-        'current_points': current_points,
-        'action_logs': action_logs
-    })
+    return {"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs}
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
