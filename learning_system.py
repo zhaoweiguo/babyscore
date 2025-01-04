@@ -21,6 +21,12 @@ def show_status(request: Request):
     action_logs = system.action_logs
     return templates.TemplateResponse("status.html", {"request": request, "current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
 
+@app.get("/points_chart", response_class=HTMLResponse)
+def show_points_chart(request: Request):
+    # 使用全局的 LearningSystem 实例
+    action_logs = system.action_logs
+    return templates.TemplateResponse("points_chart.html", {"request": request, "action_logs": action_logs})
+
 @app.post("/handle_action", response_class=JSONResponse)
 async def handle_action(action: str = Form(...)):
     # 使用全局的 LearningSystem 实例
