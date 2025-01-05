@@ -11,6 +11,7 @@ LEVELS = {
 # 初始化积分和等级
 from config import POSITIVE_ACTIONS, NEGATIVE_ACTIONS  # 从config.py中导入行为及其对应的积分变化
 import datetime  # 导入datetime模块以记录时间
+import sqlite3
 
 class LearningSystem:
     def __init__(self):
@@ -24,7 +25,7 @@ class LearningSystem:
         self.negative_actions = NEGATIVE_ACTIONS
 
         # 添加行为日志列表
-        self.action_logs = self.load_action_logs()
+        self.action_logs = self.load_action_logs_from_db()
 
     # 获取当前等级和小等级
     def get_current_status(self):
@@ -50,32 +51,31 @@ class LearningSystem:
             else:
                 print("当前小等级已满，请家长决定升级到下一个大等级。")
 
-    # 加载行为日志
-    def load_action_logs(self):
-        try:
-            with open("action_logs.txt", "r") as file:
-                return file.readlines()
-        except FileNotFoundError:
-            return []
-
-    # 保存行为日志
-    def save_action_logs(self):
-        with open("action_logs.txt", "w") as file:
-            file.writelines(self.action_logs)
+    def load_action_logs_from_db(self):
+        conn = sqlite3.connect('babyscore.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT behavior, points_change, timestamp FROM action_logs ORDER BY timestamp")
+        action_logs = cursor.fetchall()
+        conn.close()
+        return [{'behavior': log[0], 'points_change': log[1], 'timestamp': log[2]} for log in action_logs]
 
     # 处理行为
     def handle_action(self, action):
         if action in self.positive_actions:
             points = self.positive_actions[action]
             self.add_points(points)
-            log_entry = f"行为: {action}, 积分变化: +{points}, 时间: {datetime.datetime.now().isoformat()}\n"  # 确保时间格式正确
-            self.action_logs.append(log_entry)
-            self.save_action_logs()  # 保存行为日志
+            self.log_action(action, points)
         elif action in self.negative_actions:
             points = self.negative_actions[action]
             self.deduct_points(points)
-            log_entry = f"行为: {action}, 积分变化: {points}, 时间: {datetime.datetime.now().isoformat()}\n"  # 确保时间格式正确
-            self.action_logs.append(log_entry)
-            self.save_action_logs()  # 保存行为日志
+            self.log_action(action, points)
         else:
             print("未知的行为")
+
+    def log_action(self, action, points):
+        conn = sqlite3.connect('babyscore.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO action_logs (behavior, points_change) VALUES (?, ?)", (action, points))
+        conn.commit()
+        conn.close()
+        self.action_logs = self.load_action_logs_from_db()  # 更新行为日志列表

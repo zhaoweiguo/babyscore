@@ -83,6 +83,7 @@ async def handle_action(actionType: str = Form(...), action: str = Form(...)):
     current_sub_level = current_sub_level.split(': ')[1]
     current_points = current_points.split(': ')[1]
     action_logs = system.action_logs  # 获取最新的行为日志
+    
     return {"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs}
 
 @app.get("/get_action_logs/")
@@ -100,5 +101,5 @@ def get_action_logs():
     conn.close()
     
     # 将查询结果转换为JSON格式
-    logs = [{'behavior': log[0], 'points_change': log[1], 'timestamp': log[2].isoformat()} for log in action_logs]
+    logs = [{'behavior': log[0], 'points_change': log[1], 'timestamp': datetime.fromisoformat(log[2]).isoformat()} for log in action_logs]
     return logs
