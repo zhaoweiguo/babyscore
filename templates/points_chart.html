@@ -7,8 +7,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引入 chartjs-adapter-date-fns 库 -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
+    {% include 'navbar.html' %}
     <h1>积分变化折线图</h1>
     <canvas id="pointsChart" width="400" height="200"></canvas>
 

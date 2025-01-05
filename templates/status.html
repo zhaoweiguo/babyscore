@@ -7,8 +7,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引入 chartjs-adapter-date-fns 库 -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
+    {% include 'navbar.html' %}
     <h1>学习养成系统状态</h1>
     <p>当前等级: <span id="currentLevel">{{ current_level }}</span></p>
     <p>当前小等级: <span id="currentSubLevel">{{ current_sub_level }}</span></p>
@@ -102,6 +105,7 @@
 
             const formData = new FormData(this);
             const action = formData.get('action');
+            console.log('Selected action:', action);  // 添加调试日志
 
             fetch('/handle_action', {
                 method: 'POST',
@@ -110,8 +114,12 @@
                 },
                 body: new URLSearchParams({ action: action }).toString(),
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);  // 添加调试日志
+                return response.json();
+            })
             .then(data => {
+                console.log('Received data:', data);  // 添加调试日志
                 // 更新页面内容
                 document.getElementById('currentLevel').textContent = data.current_level;
                 document.getElementById('currentSubLevel').textContent = data.current_sub_level;
@@ -147,7 +155,9 @@
                 chart.data.datasets[0].data = newCumulativePoints;
                 chart.update();
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);  // 添加调试日志
+            });
         });
     </script>
 </body>
