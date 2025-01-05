@@ -3,69 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>设置</title>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入自定义样式 -->
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     {% include 'navbar.html' %}
-    <h1>设置</h1>
-    <h2>行为操作</h2>
-    <form id="actionForm">
-        <label for="action">选择行为:</label>
-        <select name="action" id="action">
-            <option value="没有发脾气">没有发脾气</option>
-            <option value="努力完成学习">努力完成学习</option>
-            <option value="按时睡觉">按时睡觉</option>
-            <option value="发脾气">发脾气</option>
-            <option value="没有完成学习">没有完成学习</option>
-            <option value="没有按时睡觉">没有按时睡觉</option>
-        </select>
-        <button type="submit">提交</button>
-    </form>
+    <div class="container mt-4">
+        <h1>设置</h1>
+        <h2>行为操作</h2>
+        <form id="actionForm">
+            <div class="form-group">
+                <label for="action">选择行为:</label>
+                <select name="action" id="action" class="form-control">
+                    <option value="没有发脾气">没有发脾气</option>
+                    <option value="努力完成学习">努力完成学习</option>
+                    <option value="按时睡觉">按时睡觉</option>
+                    <option value="发脾气">发脾气</option>
+                    <option value="没有完成学习">没有完成学习</option>
+                    <option value="没有按时睡觉">没有按时睡觉</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">提交</button>
+        </form>
 
-    <script>
-        // 获取行为日志数据
-        const actionLogs = {{ action_logs|tojson }};
+        <script>
+            // 获取行为日志数据
+            const actionLogs = {{ action_logs|tojson }};
 
-        // 添加事件监听器以处理表单提交
-        document.getElementById('actionForm').addEventListener('submit', function(event) {
-            event.preventDefault();  // 阻止表单的默认提交行为
+            // 添加事件监听器以处理表单提交
+            document.getElementById('actionForm').addEventListener('submit', function(event) {
+                event.preventDefault();  // 阻止表单的默认提交行为
 
-            const formData = new FormData(this);
-            const action = formData.get('action');
-            console.log('Selected action:', action);  // 添加调试日志
+                const formData = new FormData(this);
+                const action = formData.get('action');
+                console.log('Selected action:', action);  // 添加调试日志
 
-            fetch('/handle_action', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ action: action }).toString(),
-            })
-            .then(response => {
-                console.log('Response status:', response.status);  // 添加调试日志
-                return response.json();
-            })
-            .then(data => {
-                console.log('Received data:', data);  // 添加调试日志
-                // 更新页面内容
-                document.getElementById('currentLevel').textContent = data.current_level;
-                document.getElementById('currentSubLevel').textContent = data.current_sub_level;
-                document.getElementById('currentPoints').textContent = data.current_points;
+                fetch('/handle_action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ action: action }).toString(),
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);  // 添加调试日志
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);  // 添加调试日志
+                    // 更新页面内容
+                    document.getElementById('currentLevel').textContent = data.current_level;
+                    document.getElementById('currentSubLevel').textContent = data.current_sub_level;
+                    document.getElementById('currentPoints').textContent = data.current_points;
 
-                // 更新行为日志
-                const actionLogsList = document.getElementById('actionLogs');
-                actionLogsList.innerHTML = '';  // 清空现有日志
-                data.action_logs.forEach(log => {
-                    const li = document.createElement('li');
-                    li.textContent = log;
-                    actionLogsList.appendChild(li);
+                    // 更新行为日志
+                    const actionLogsList = document.getElementById('actionLogs');
+                    actionLogsList.innerHTML = '';  // 清空现有日志
+                    data.action_logs.forEach(log => {
+                        const li = document.createElement('li');
+                        li.textContent = log;
+                        actionLogsList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);  // 添加调试日志
                 });
-            })
-            .catch(error => {
-                console.error('Error:', error);  // 添加调试日志
             });
-        });
-    </script>
+        </script>
+    </div>
+    <!-- 引入 Bootstrap JS 和依赖 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,11 +1,18 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-from logic import LearningSystem
+from fastapi.staticfiles import StaticFiles
 import uvicorn
+
+# 假设 LearningSystem 类定义在 learning_system.py 文件的某个模块中
+# 这里假设 LearningSystem 类定义在同文件夹下的 learning_system.py 文件中
+from logic import LearningSystem
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+# 挂载静态文件目录
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 创建全局的 LearningSystem 实例
 system = LearningSystem()
@@ -57,4 +64,4 @@ async def handle_action(action: str = Form(...)):
     return {"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)

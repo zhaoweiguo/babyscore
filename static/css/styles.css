@@ -17,7 +17,7 @@ nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    display: flex;
+    display: flex;  /* 确保导航栏在同一行 */
     justify-content: center;
 }
 
