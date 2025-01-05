@@ -51,9 +51,12 @@ def show_points_chart(request: Request):
     return templates.TemplateResponse("points_chart.html", {"request": request, "action_logs": action_logs})
 
 @app.post("/handle_action", response_class=JSONResponse)
-async def handle_action(action: str = Form(...)):
+async def handle_action(actionType: str = Form(...), action: str = Form(...)):
     # 使用全局的 LearningSystem 实例
-    system.handle_action(action)
+    if actionType == 'reward':
+        system.handle_action(action)
+    elif actionType == 'punishment':
+        system.handle_action(action)
     # 重新获取当前状态和行为日志
     current_level, current_sub_level, current_points = system.get_current_status().split(', ')
     current_level = current_level.split(': ')[1]

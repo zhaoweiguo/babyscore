@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>设置</title>
     <!-- 引入本地的 Bootstrap CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <!-- 引入自定义样式 -->
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
@@ -12,40 +12,107 @@
     {% include 'navbar.html' %}
     <div class="container mt-4">
         <h1>设置</h1>
-        <h2>行为操作</h2>
-        <form id="actionForm">
-            <div class="form-group">
-                <label for="action">选择行为:</label>
-                <select name="action" id="action" class="form-control">
-                    <option value="没有发脾气">没有发脾气</option>
-                    <option value="努力完成学习">努力完成学习</option>
-                    <option value="按时睡觉">按时睡觉</option>
-                    <option value="发脾气">发脾气</option>
-                    <option value="没有完成学习">没有完成学习</option>
-                    <option value="没有按时睡觉">没有按时睡觉</option>
-                </select>
+
+        <!-- 添加标签页导航 -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="reward-tab" data-toggle="tab" data-target="#reward" type="button" role="tab" aria-controls="reward" aria-selected="true">奖励行为</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="punishment-tab" data-toggle="tab" data-target="#punishment" type="button" role="tab" aria-controls="punishment" aria-selected="false">惩罚行为</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <!-- 奖励行为标签页 -->
+            <div class="tab-pane fade show active" id="reward" role="tabpanel" aria-labelledby="reward-tab">
+                <form id="rewardForm">
+                    <div class="form-group">
+                        <label for="rewardAction">选择奖励行为:</label>
+                        <select name="rewardAction" id="rewardAction" class="form-control">
+                            <option value="没有发脾气">没有发脾气</option>
+                            <option value="努力完成学习">努力完成学习</option>
+                            <option value="按时睡觉">按时睡觉</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">奖励行为</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">提交</button>
-        </form>
+            <!-- 惩罚行为标签页 -->
+            <div class="tab-pane fade" id="punishment" role="tabpanel" aria-labelledby="punishment-tab">
+                <form id="punishmentForm">
+                    <div class="form-group">
+                        <label for="punishmentAction">选择惩罚行为:</label>
+                        <select name="punishmentAction" id="punishmentAction" class="form-control">
+                            <option value="发脾气">发脾气</option>
+                            <option value="没有完成学习">没有完成学习</option>
+                            <option value="没有按时睡觉">没有按时睡觉</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-danger">惩罚行为</button>
+                </form>
+            </div>
+        </div>
 
         <script>
             // 获取行为日志数据
             const actionLogs = {{ action_logs|tojson }};
 
-            // 添加事件监听器以处理表单提交
-            document.getElementById('actionForm').addEventListener('submit', function(event) {
+            // 添加事件监听器以处理奖励行为表单提交
+            document.getElementById('rewardForm').addEventListener('submit', function(event) {
                 event.preventDefault();  // 阻止表单的默认提交行为
 
                 const formData = new FormData(this);
-                const action = formData.get('action');
-                console.log('Selected action:', action);  // 添加调试日志
+                const action = formData.get('rewardAction');
+
+                console.log('Selected reward action:', action);  // 添加调试日志
 
                 fetch('/handle_action', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: new URLSearchParams({ action: action }).toString(),
+                    body: new URLSearchParams({ actionType: 'reward', action: action }).toString(),
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);  // 添加调试日志
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);  // 添加调试日志
+                    // 更新页面内容
+                    document.getElementById('currentLevel').textContent = data.current_level;
+                    document.getElementById('currentSubLevel').textContent = data.current_sub_level;
+                    document.getElementById('currentPoints').textContent = data.current_points;
+
+                    // 更新行为日志
+                    const actionLogsList = document.getElementById('actionLogs');
+                    actionLogsList.innerHTML = '';  // 清空现有日志
+                    data.action_logs.forEach(log => {
+                        const li = document.createElement('li');
+                        li.textContent = log;
+                        actionLogsList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);  // 添加调试日志
+                });
+            });
+
+            // 添加事件监听器以处理惩罚行为表单提交
+            document.getElementById('punishmentForm').addEventListener('submit', function(event) {
+                event.preventDefault();  // 阻止表单的默认提交行为
+
+                const formData = new FormData(this);
+                const action = formData.get('punishmentAction');
+
+                console.log('Selected punishment action:', action);  // 添加调试日志
+
+                fetch('/handle_action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ actionType: 'punishment', action: action }).toString(),
                 })
                 .then(response => {
                     console.log('Response status:', response.status);  // 添加调试日志
@@ -74,8 +141,8 @@
         </script>
     </div>
     <!-- 引入 Bootstrap JS 和依赖 -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/static/js/umd/popper.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
 </body>
 </html>
