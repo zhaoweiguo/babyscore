@@ -8,7 +8,7 @@ body {
 
 /* 导航栏样式 */
 nav {
-    background-color: #4CAF50;  /* 修改导航栏背景颜色 */
+    background-color: #0000FF;  /* 修改导航栏背景颜色为蓝色 */
     color: white;
     padding: 10px 0;
 }
@@ -34,6 +34,17 @@ nav ul li a {
 nav ul li a:hover {
     text-decoration: underline;
 }
+
+/* 添加或修改菜单栏颜色 */
+/* .nav-tabs .nav-link {
+    background-color: #669999;
+    color: #333;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #77bbbb;
+    color: #fff;
+} */
 
 /* 表单样式 */
 form {
