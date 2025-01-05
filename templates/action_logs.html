@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>行为日志</title>
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <h1>行为日志</h1>
+    <ul id="actionLogs">
+        {% for log in action_logs %}
+            <li>{{ log }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

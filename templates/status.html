@@ -17,29 +17,6 @@
     <p>当前小等级: <span id="currentSubLevel">{{ current_sub_level }}</span></p>
     <p>当前积分: <span id="currentPoints">{{ current_points }}</span></p>
 
-    <h2>行为操作</h2>
-    <form id="actionForm">
-        <label for="action">选择行为:</label>
-        <select name="action" id="action">
-            <option value="没有发脾气">没有发脾气</option>
-            <option value="努力完成学习">努力完成学习</option>
-            <option value="按时睡觉">按时睡觉</option>
-            <option value="发脾气">发脾气</option>
-            <option value="没有完成学习">没有完成学习</option>
-            <option value="没有按时睡觉">没有按时睡觉</option>
-        </select>
-        <button type="submit">提交</button>
-    </form>
-
-    <h2>行为日志</h2>
-    <ul id="actionLogs">
-        {% for log in action_logs %}
-            <li>{{ log }}</li>
-        {% endfor %}
-    </ul>
-
-    <!-- 添加链接到折线图页面 -->
-    <a href="/points_chart">查看积分变化折线图</a>
 
     <script>
         // 获取行为日志数据
