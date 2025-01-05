@@ -219,5 +219,17 @@ fetch('/get_action_logs/')
             punishmentChart.options.scales.x.time.unit = selectedUnit;
             punishmentChart.update();
         });
+
+        // 添加事件监听器以处理标签页切换
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('click', function(event) {
+                event.preventDefault();
+                const target = event.target.getAttribute('data-bs-target');
+                document.querySelectorAll('.tab-pane').forEach(panel => {
+                    panel.classList.remove('show', 'active');
+                });
+                document.querySelector(target).classList.add('show', 'active');
+            });
+        });
     })
     .catch(error => console.error('Error fetching action logs:', error));
