@@ -131,33 +131,38 @@ fetch('/points_data')
         document.getElementById('timeUnit').addEventListener('change', function(event) {
             const selectedUnit = event.target.value;
 
-            // 更新分组数据
-            totalGroupedData = groupByTimeUnit(totalChartLabels, totalChartData, selectedUnit);
-            rewardGroupedData = groupByTimeUnit(rewardChartLabels, rewardChartData, selectedUnit);
-            punishmentGroupedData = groupByTimeUnit(punishmentChartLabels, punishmentChartData, selectedUnit);
+            // 发送请求以获取新的分组数据
+            fetch(`/points_data?groupby=${selectedUnit}`)
+                .then(response => response.json())
+                .then(data => {
+                    const totalGroupedData = data.total;
+                    const rewardGroupedData = data.rewards;
+                    const punishmentGroupedData = data.punishments;
 
-            totalChartLabels = totalGroupedData.map(item => item.label);
-            totalChartData = totalGroupedData.map(item => item.points);
-            rewardChartLabels = rewardGroupedData.map(item => item.label);
-            rewardChartData = rewardGroupedData.map(item => item.points);
-            punishmentChartLabels = punishmentGroupedData.map(item => item.label);
-            punishmentChartData = punishmentGroupedData.map(item => item.points);
+                    let totalChartLabels = totalGroupedData.map(item => item.label);
+                    let totalChartData = totalGroupedData.map(item => item.points);
+                    let rewardChartLabels = rewardGroupedData.map(item => item.label);
+                    let rewardChartData = rewardGroupedData.map(item => item.points);
+                    let punishmentChartLabels = punishmentGroupedData.map(item => item.label);
+                    let punishmentChartData = punishmentGroupedData.map(item => item.points);
 
-            // 更新图表数据
-            totalChart.data.labels = totalChartLabels;
-            totalChart.data.datasets[0].data = totalChartData;
-            totalChart.options.scales.x.time.unit = selectedUnit;
-            totalChart.update();
+                    // 更新图表数据
+                    totalChart.data.labels = totalChartLabels;
+                    totalChart.data.datasets[0].data = totalChartData;
+                    totalChart.options.scales.x.time.unit = selectedUnit;
+                    totalChart.update();
 
-            rewardChart.data.labels = rewardChartLabels;
-            rewardChart.data.datasets[0].data = rewardChartData;
-            rewardChart.options.scales.x.time.unit = selectedUnit;
-            rewardChart.update();
+                    rewardChart.data.labels = rewardChartLabels;
+                    rewardChart.data.datasets[0].data = rewardChartData;
+                    rewardChart.options.scales.x.time.unit = selectedUnit;
+                    rewardChart.update();
 
-            punishmentChart.data.labels = punishmentChartLabels;
-            punishmentChart.data.datasets[0].data = punishmentChartData;
-            punishmentChart.options.scales.x.time.unit = selectedUnit;
-            punishmentChart.update();
+                    punishmentChart.data.labels = punishmentChartLabels;
+                    punishmentChart.data.datasets[0].data = punishmentChartData;
+                    punishmentChart.options.scales.x.time.unit = selectedUnit;
+                    punishmentChart.update();
+                })
+                .catch(error => console.error('Error fetching action logs:', error));
         });
 
         // 添加事件监听器以处理标签页切换
