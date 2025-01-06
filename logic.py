@@ -11,10 +11,10 @@ LEVELS = {
 # 初始化积分和等级
 from config import POSITIVE_ACTIONS, NEGATIVE_ACTIONS  # 从config.py中导入行为及其对应的积分变化
 import datetime  # 导入datetime模块以记录时间
-import sqlite3
+from models import ActionLog  # 添加对模型的导入
 
 class LearningSystem:
-    def __init__(self):
+    def __init__(self, session):
         self.current_level = "小小孩"
         self.current_sub_level = "非常初级的"
         self.current_points = 0
@@ -25,6 +25,7 @@ class LearningSystem:
         self.negative_actions = NEGATIVE_ACTIONS
 
         # 添加行为日志列表
+        self.session = session
         self.action_logs = self.load_action_logs_from_db()
 
     # 获取当前等级和小等级
@@ -52,12 +53,8 @@ class LearningSystem:
                 print("当前小等级已满，请家长决定升级到下一个大等级。")
 
     def load_action_logs_from_db(self):
-        conn = sqlite3.connect('babyscore.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT behavior, points_change, timestamp FROM action_logs ORDER BY timestamp")
-        action_logs = cursor.fetchall()
-        conn.close()
-        return [{'behavior': log[0], 'points_change': log[1], 'timestamp': log[2]} for log in action_logs]
+        action_logs = self.session.query(ActionLog).order_by(ActionLog.timestamp).all()
+        return [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp} for log in action_logs]
 
     # 处理行为
     def handle_action(self, action):
@@ -73,9 +70,7 @@ class LearningSystem:
             print("未知的行为")
 
     def log_action(self, action, points):
-        conn = sqlite3.connect('babyscore.db')
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO action_logs (behavior, points_change) VALUES (?, ?)", (action, points))
-        conn.commit()
-        conn.close()
+        new_log = ActionLog(behavior=action, points_change=points)
+        self.session.add(new_log)
+        self.session.commit()
         self.action_logs = self.load_action_logs_from_db()  # 更新行为日志列表
