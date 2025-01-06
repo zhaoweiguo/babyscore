@@ -42,19 +42,6 @@ def show_status():
     action_logs = system.action_logs
     return render_template("status.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
 
-@app.route("/status", methods=['GET'])
-def get_status():
-    # 使用全局的 LearningSystem 实例
-    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    current_level = current_level.split(': ')[1]
-    current_sub_level = current_sub_level.split(': ')[1]
-    current_points = current_points.split(': ')[1]
-    return jsonify({
-        "current_level": current_level,
-        "current_sub_level": current_sub_level,
-        "current_points": current_points
-    })
-
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
     # 使用全局的 LearningSystem 实例
@@ -78,6 +65,21 @@ def show_points_chart():
     action_logs = system.action_logs
     return render_template("points_chart.html", action_logs=action_logs)
 
+
+
+@app.route("/status", methods=['GET'])
+def get_status():
+    # 使用全局的 LearningSystem 实例
+    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
+    current_level = current_level.split(': ')[1]
+    current_sub_level = current_sub_level.split(': ')[1]
+    current_points = current_points.split(': ')[1]
+    return jsonify({
+        "current_level": current_level,
+        "current_sub_level": current_sub_level,
+        "current_points": current_points
+    })
+
 @app.route("/handle_action", methods=['POST'])
 def handle_action():
     # 使用全局的 LearningSystem 实例
@@ -96,6 +98,18 @@ def handle_action():
     
     return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
 
+@app.route("/points_data", methods=['GET'])
+def get_points_data():
+    # 使用全局的 LearningSystem 实例
+    action_logs = system.action_logs
+    points_data = []
+    for log in action_logs:
+        points_data.append({
+            'timestamp': log.timestamp.isoformat(),
+            'points_change': log.points_change
+        })
+    return jsonify(points_data)
+
 @app.route("/get_action_logs/", methods=['GET'])
 def get_action_logs():
     # 查询ActionLog表中的数据
@@ -104,3 +118,4 @@ def get_action_logs():
     # 将查询结果转换为JSON格式
     logs = [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp.isoformat()} for log in action_logs]
     return jsonify(logs)
+
