@@ -36,12 +36,9 @@ fetch('/get_action_logs/')
                     case 'day':
                         key = date.toISOString().split('T')[0];
                         break;
-                    case 'hour':
-                        key = date.toISOString().slice(0, 13);
-                        break;
                     case 'week':
                         const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
-                        key = weekStart.toISOString().split('T')[0];
+                        key = weekStart.toISOString().slice(0, 7) + '-' + ('0' + (date.getWeek() + 1)).slice(-2);
                         break;
                     case 'month':
                         key = date.toISOString().slice(0, 7);

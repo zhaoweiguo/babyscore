@@ -101,14 +101,54 @@ def handle_action():
 @app.route("/points_data", methods=['GET'])
 def get_points_data():
     # 使用全局的 LearningSystem 实例
-    action_logs = system.action_logs
+    action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
     points_data = []
     for log in action_logs:
         points_data.append({
             'timestamp': log.timestamp.isoformat(),
             'points_change': log.points_change
         })
-    return jsonify(points_data)
+
+    # 获取 groupby 参数，默认为 'day'
+    groupby = request.args.get('groupby', 'day')
+
+    # 添加时间分组函数
+    def group_by_time_unit(labels, points, unit):
+        grouped_data = {}
+        for label, point in zip(labels, points):
+            date = datetime.fromisoformat(label)
+            key = None
+            if unit == 'day':
+                key = date.strftime('%Y-%m-%d')
+            elif unit == 'week':
+                # 修改: 使用 %Y-%U 格式化为 yyyy-week
+                key = date.strftime('%Y-%U')
+            elif unit == 'month':
+                # 修改: 使用 %Y-%m 格式化为 yyyy-month
+                key = date.strftime('%Y-%m')
+            else:
+                key = date.strftime('%Y-%m-%d')
+            if key not in grouped_data:
+                grouped_data[key] = {'points': 0, 'count': 0}
+            grouped_data[key]['points'] += point
+            grouped_data[key]['count'] += 1
+        return [{'label': key, 'points': data['points']} for key, data in grouped_data.items()]
+
+    # 初始化数据
+    labels = [log['timestamp'] for log in points_data]
+    points = [log['points_change'] for log in points_data]
+    rewards = [point for point in points if point > 0]
+    punishments = [point for point in points if point < 0]
+
+    total_grouped_data = group_by_time_unit(labels, points, groupby)
+    reward_grouped_data = group_by_time_unit(labels, rewards, groupby)
+    punishment_grouped_data = group_by_time_unit(labels, punishments, groupby)
+
+    return jsonify({
+        'total': total_grouped_data,
+        'rewards': reward_grouped_data,
+        'punishments': punishment_grouped_data
+    })
 
 @app.route("/get_action_logs/", methods=['GET'])
 def get_action_logs():
