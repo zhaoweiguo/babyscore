@@ -5,17 +5,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.inspection import inspect  # 导入inspect模块
 
-from models import Base, ActionLog
-
-# 添加: 创建数据库引擎
-# 添加: 加载.env文件
-load_dotenv(dotenv_path='./config/.env')
-
-# 添加: 从.env文件中获取DATABASE_URI
-database_uri = os.getenv('DATABASE_URI', 'mysql+pymysql://root:sa@localhost:3306/babyscore')
-engine = create_engine(database_uri)
-
-# 确保ActionLog类定义在Base.metadata.create_all(engine)之前
+from models import Base, ActionLog, engine
 
 # 添加: 创建所有表
 Base.metadata.create_all(engine)

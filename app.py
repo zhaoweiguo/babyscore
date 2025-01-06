@@ -6,7 +6,7 @@ import json
 from logic import LearningSystem  # 添加对 LearningSystem 的导入
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base, ActionLog  # 添加对模型的导入
+from models import Base, ActionLog, Session, engine
 
 # 加载 .env 文件
 load_dotenv("config/.env")
@@ -15,12 +15,7 @@ app = Flask(__name__)
 
 app.static_folder = 'static'
 
-# 配置数据库连接字符串
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///babyscore.db')  # 使用环境变量配置数据库连接字符串
 
-# 创建数据库引擎
-engine = create_engine(DATABASE_URI, connect_args={'connect_timeout': 10}, echo=True, pool_pre_ping=True, pool_size=10, max_overflow=20, pool_recycle=1800, pool_timeout=30)
-Session = sessionmaker(bind=engine)
 session = Session()
 
 # 创建全局的 LearningSystem 实例
