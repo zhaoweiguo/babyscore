@@ -42,6 +42,19 @@ def show_status():
     action_logs = system.action_logs
     return render_template("status.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
 
+@app.route("/status", methods=['GET'])
+def get_status():
+    # 使用全局的 LearningSystem 实例
+    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
+    current_level = current_level.split(': ')[1]
+    current_sub_level = current_sub_level.split(': ')[1]
+    current_points = current_points.split(': ')[1]
+    return jsonify({
+        "current_level": current_level,
+        "current_sub_level": current_sub_level,
+        "current_points": current_points
+    })
+
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
     # 使用全局的 LearningSystem 实例

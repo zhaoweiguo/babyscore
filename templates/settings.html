@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <!-- 引入自定义样式 -->
     <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- 添加完整的 jQuery 库 -->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -54,94 +56,82 @@
         </div>
 
         <script>
-            // 获取行为日志数据
-            const actionLogs = {{ action_logs|tojson }};
-
-            // 添加事件监听器以处理奖励行为表单提交
-            document.getElementById('rewardForm').addEventListener('submit', function(event) {
-                event.preventDefault();  // 阻止表单的默认提交行为
-
-                const formData = new FormData(this);
-                const action = formData.get('rewardAction');
-
-                console.log('Selected reward action:', action);  // 添加调试日志
-
-                fetch('/handle_action', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({ actionType: 'reward', action: action }).toString(),
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);  // 添加调试日志
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Received data:', data);  // 添加调试日志
-                    // 更新页面内容
-                    document.getElementById('currentLevel').textContent = data.current_level;
-                    document.getElementById('currentSubLevel').textContent = data.current_sub_level;
-                    document.getElementById('currentPoints').textContent = data.current_points;
-
-                    // 更新行为日志
-                    const actionLogsList = document.getElementById('actionLogs');
-                    actionLogsList.innerHTML = '';  // 清空现有日志
-                    data.action_logs.forEach(log => {
-                        const li = document.createElement('li');
-                        li.textContent = log;
-                        actionLogsList.appendChild(li);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);  // 添加调试日志
+            // 初始化 Bootstrap 的标签页组件
+            $(document).ready(function() {
+                $('#myTab a').on('click', function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
                 });
-            });
 
-            // 添加事件监听器以处理惩罚行为表单提交
-            document.getElementById('punishmentForm').addEventListener('submit', function(event) {
-                event.preventDefault();  // 阻止表单的默认提交行为
+                // 添加事件监听器以处理奖励行为表单提交
+                document.getElementById('rewardForm').addEventListener('submit', function(event) {
+                    event.preventDefault();  // 阻止表单的默认提交行为
 
-                const formData = new FormData(this);
-                const action = formData.get('punishmentAction');
+                    const formData = new FormData(this);
+                    const action = formData.get('rewardAction');
 
-                console.log('Selected punishment action:', action);  // 添加调试日志
+                    console.log('Selected reward action:', action);  // 添加调试日志
 
-                fetch('/handle_action', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({ actionType: 'punishment', action: action }).toString(),
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);  // 添加调试日志
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Received data:', data);  // 添加调试日志
-                    // 更新页面内容
-                    document.getElementById('currentLevel').textContent = data.current_level;
-                    document.getElementById('currentSubLevel').textContent = data.current_sub_level;
-                    document.getElementById('currentPoints').textContent = data.current_points;
-
-                    // 更新行为日志
-                    const actionLogsList = document.getElementById('actionLogs');
-                    actionLogsList.innerHTML = '';  // 清空现有日志
-                    data.action_logs.forEach(log => {
-                        const li = document.createElement('li');
-                        li.textContent = log;
-                        actionLogsList.appendChild(li);
+                    fetch('/handle_action', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ actionType: 'reward', action: action }).toString(),
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);  // 添加调试日志
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Received data:', data);  // 添加调试日志
+                        // 更新页面内容
+                        // 确保在DOM加载完成后执行
+                        $('#currentLevel').text(data.current_level);
+                        $('#currentSubLevel').text(data.current_sub_level);
+                        $('#currentPoints').text(data.current_points);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);  // 添加调试日志
                     });
-                })
-                .catch(error => {
-                    console.error('Error:', error);  // 添加调试日志
+                });
+
+                // 添加事件监听器以处理惩罚行为表单提交
+                document.getElementById('punishmentForm').addEventListener('submit', function(event) {
+                    event.preventDefault();  // 阻止表单的默认提交行为
+
+                    const formData = new FormData(this);
+                    const action = formData.get('punishmentAction');
+
+                    console.log('Selected punishment action:', action);  // 添加调试日志
+
+                    fetch('/handle_action', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ actionType: 'punishment', action: action }).toString(),
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);  // 添加调试日志
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Received data:', data);  // 添加调试日志
+                        // 更新页面内容
+                        // 确保在DOM加载完成后执行
+                        $('#currentLevel').text(data.current_level);
+                        $('#currentSubLevel').text(data.current_sub_level);
+                        $('#currentPoints').text(data.current_points);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);  // 添加调试日志
+                    });
                 });
             });
         </script>
     </div>
     <!-- 引入 Bootstrap JS 和依赖 -->
-    <script src="/static/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/static/js/popper.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
 </body>

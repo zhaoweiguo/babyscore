@@ -2,3 +2,4 @@ Flask==2.0.3
 sqlalchemy==2.0.36
 python-dotenv==1.0.1
 PyMySQL  # 添加PyMySQL依赖
+werkzeug==2.0.3  # 更新werkzeug版本以解决导入问题
