@@ -1,67 +1,10 @@
 // 添加AJAX请求以获取数据
-fetch('/get_action_logs/')
+fetch('/points_data')
     .then(response => response.json())
     .then(data => {
-        const actionLogs = data;
-        const pointsData = actionLogs.map(log => log.points_change);
-        const rewardData = actionLogs.filter(log => log.points_change > 0).map(log => log.points_change);
-        const punishmentData = actionLogs.filter(log => log.points_change < 0).map(log => log.points_change);
-        const timeLabels = actionLogs.map(log => new Date(log.timestamp));
-
-        // 计算累计积分
-        const cumulativePoints = pointsData.reduce((acc, curr) => {
-            acc.push(acc[acc.length - 1] + curr);
-            return acc;
-        }, [0]);
-
-        // 计算累计奖励积分
-        const cumulativeRewards = rewardData.reduce((acc, curr) => {
-            acc.push(acc[acc.length - 1] + curr);
-            return acc;
-        }, [0]);
-
-        // 计算累计惩罚积分
-        const cumulativePunishments = punishmentData.reduce((acc, curr) => {
-            acc.push(acc[acc.length - 1] + curr);
-            return acc;
-        }, [0]);
-
-        // 添加时间分组函数
-        function groupByTimeUnit(labels, points, unit) {
-            const groupedData = {};
-            labels.forEach((label, index) => {
-                const date = new Date(label);
-                let key;
-                switch (unit) {
-                    case 'day':
-                        key = date.toISOString().split('T')[0];
-                        break;
-                    case 'week':
-                        const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
-                        key = weekStart.toISOString().slice(0, 7) + '-' + ('0' + (date.getWeek() + 1)).slice(-2);
-                        break;
-                    case 'month':
-                        key = date.toISOString().slice(0, 7);
-                        break;
-                    default:
-                        key = date.toISOString().split('T')[0];
-                }
-                if (!groupedData[key]) {
-                    groupedData[key] = { points: 0, count: 0 };
-                }
-                groupedData[key].points += points[index];
-                groupedData[key].count += 1;
-            });
-            return Object.keys(groupedData).map(key => ({
-                label: key,
-                points: groupedData[key].points
-            })).sort((a, b) => new Date(a.label) - new Date(b.label));
-        }
-
-        // 初始化数据
-        let totalGroupedData = groupByTimeUnit(timeLabels, cumulativePoints, 'day');
-        let rewardGroupedData = groupByTimeUnit(timeLabels, cumulativeRewards, 'day');
-        let punishmentGroupedData = groupByTimeUnit(timeLabels, cumulativePunishments, 'day');
+        const totalGroupedData = data.total;
+        const rewardGroupedData = data.rewards;
+        const punishmentGroupedData = data.punishments;
 
         let totalChartLabels = totalGroupedData.map(item => item.label);
         let totalChartData = totalGroupedData.map(item => item.points);
@@ -189,9 +132,9 @@ fetch('/get_action_logs/')
             const selectedUnit = event.target.value;
 
             // 更新分组数据
-            totalGroupedData = groupByTimeUnit(timeLabels, cumulativePoints, selectedUnit);
-            rewardGroupedData = groupByTimeUnit(timeLabels, cumulativeRewards, selectedUnit);
-            punishmentGroupedData = groupByTimeUnit(timeLabels, cumulativePunishments, selectedUnit);
+            totalGroupedData = groupByTimeUnit(totalChartLabels, totalChartData, selectedUnit);
+            rewardGroupedData = groupByTimeUnit(rewardChartLabels, rewardChartData, selectedUnit);
+            punishmentGroupedData = groupByTimeUnit(punishmentChartLabels, punishmentChartData, selectedUnit);
 
             totalChartLabels = totalGroupedData.map(item => item.label);
             totalChartData = totalGroupedData.map(item => item.points);

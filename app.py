@@ -1,7 +1,7 @@
 import os  # 添加导入os模块
 from dotenv import load_dotenv  # 添加导入load_dotenv模块
 from flask import Flask, render_template, request, jsonify
-from datetime import datetime  # 修正缩进
+from datetime import datetime, timezone, timedelta  # 添加 timezone 和 timedelta 导入
 import json
 from logic import LearningSystem  # 添加对 LearningSystem 的导入
 from sqlalchemy import create_engine
@@ -104,8 +104,10 @@ def get_points_data():
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
     points_data = []
     for log in action_logs:
+        # 将时间戳转换为东八区时间
+        timestamp_east8 = log.timestamp.astimezone(timezone(timedelta(hours=8)))
         points_data.append({
-            'timestamp': log.timestamp.isoformat(),
+            'timestamp': timestamp_east8.isoformat(),
             'points_change': log.points_change
         })
 
