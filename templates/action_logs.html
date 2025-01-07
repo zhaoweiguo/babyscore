@@ -18,7 +18,7 @@
     <script>
         $(document).ready(function() {
             // 请求 /get_action_logs 接口获取数据
-            $.getJSON('/get_action_logs/', function(data) {
+            $.getJSON('/api/get_action_logs/', function(data) {
                 console.log("获取行为日志成功", data);
                 const actionLogsList = document.getElementById('actionLogs');
                 actionLogsList.innerHTML = '';  // 清空现有日志

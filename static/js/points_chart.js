@@ -1,5 +1,5 @@
 // 添加AJAX请求以获取数据
-fetch('/points_data')
+fetch('/api/points_data')
     .then(response => response.json())
     .then(data => {
         const totalGroupedData = data.total;

@@ -67,7 +67,7 @@ def show_points_chart():
 
 
 
-@app.route("/status", methods=['GET'])
+@app.route("/api/status", methods=['GET'])
 def get_status():
     # 使用全局的 LearningSystem 实例
     current_level, current_sub_level, current_points = system.get_current_status().split(', ')
@@ -80,7 +80,7 @@ def get_status():
         "current_points": current_points
     })
 
-@app.route("/handle_action", methods=['POST'])
+@app.route("/api/handle_action", methods=['POST'])
 def handle_action():
     # 使用全局的 LearningSystem 实例
     actionType = request.form['actionType']
@@ -98,7 +98,7 @@ def handle_action():
     
     return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
 
-@app.route("/points_data", methods=['GET'])
+@app.route("/api/points_data", methods=['GET'])
 def get_points_data():
     # 使用全局的 LearningSystem 实例
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
@@ -152,7 +152,7 @@ def get_points_data():
         'punishments': punishment_grouped_data
     })
 
-@app.route("/get_action_logs/", methods=['GET'])
+@app.route("/api/get_action_logs/", methods=['GET'])
 def get_action_logs():
     # 查询ActionLog表中的数据
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()

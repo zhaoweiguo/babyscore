@@ -51,7 +51,7 @@
         $(document).ready(function() {
             console.log("页面加载完成")
             // 请求 /status 接口获取数据
-            $.getJSON('/status', function(data) {
+            $.getJSON('/api/status', function(data) {
                 console.log("获取数据成功", data)
                 $('#currentLevel').text(data.current_level);
                 $('#currentSubLevel').text(data.current_sub_level);

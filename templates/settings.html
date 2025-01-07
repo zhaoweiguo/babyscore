@@ -72,7 +72,7 @@
 
                     console.log('Selected reward action:', action);  // 添加调试日志
 
-                    fetch('/handle_action', {
+                    fetch('/api/handle_action', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -105,7 +105,7 @@
 
                     console.log('Selected punishment action:', action);  // 添加调试日志
 
-                    fetch('/handle_action', {
+                    fetch('/api/handle_action', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
