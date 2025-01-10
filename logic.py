@@ -1,5 +1,8 @@
 from enum import Enum, auto
 
+from logger import log
+
+
 # 定义等级和小等级
 LEVELS = {
     "小小孩": ["非常初级的", "初级的", "正常的", "厉害的", "非常厉害的"],
@@ -10,11 +13,13 @@ LEVELS = {
     "大人": ["非常初级的", "初级的", "正常的", "厉害的", "非常厉害的"]
 }
 
-ActionType = Enum("reward", "punishment")
+class ActionType(Enum):
+    reward="reward"
+    punishment="punishment"
 
 
 # 初始化积分和等级
-from config import POSITIVE_ACTIONS, NEGATIVE_ACTIONS  # 从config.py中导入行为及其对应的积分变化
+from config import ACTIONS  # 从config.py中导入行为及其对应的积分变化
 import datetime  # 导入datetime模块以记录时间
 from models import ActionLog  # 添加对模型的导入
 
@@ -26,8 +31,7 @@ class LearningSystem:
         self.sub_level_points = 100
 
         # 从config.py中读取行为及其对应的积分变化
-        self.positive_actions = POSITIVE_ACTIONS
-        self.negative_actions = NEGATIVE_ACTIONS
+        self.actions = ACTIONS
 
         # 添加行为日志列表
         self.session = session
@@ -68,19 +72,17 @@ class LearningSystem:
 
     # 处理行为
     def handle_action(self, actionType, action):
-        if ActionType[actionType] == ActionType.reward:
-            points = self.positive_actions[action]
+        if actionType == ActionType.reward.name or actionType == ActionType.punishment.name:
+            score_type, points = self.actions[action]
             self.update_points(points)
-            self.log_action(action, points)
-        elif ActionType[actionType] == ActionType.punishment:
-            points = self.negative_actions[action]
-            self.update_points(points)
-            self.log_action(action, points)
+            self.log_action(score_type, action, points)
         else:
-            print("未知的行为")
+            log.warning("未知的行为")
+            return {"result": "error"}
+        return {"result": "ok"}
 
-    def log_action(self, action, points):
-        new_log = ActionLog(behavior=action, points_change=points)
+    def log_action(self, score_type, action, points):
+        new_log = ActionLog(score_type=score_type, behavior=action, points_change=points)
         self.session.add(new_log)
         self.session.commit()
         self.action_logs = self.load_action_logs_from_db()  # 更新行为日志列表

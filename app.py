@@ -8,6 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, ActionLog, Session, engine
 
+from logger import log
+
 # 加载 .env 文件
 load_dotenv("config/.env")
 
@@ -85,7 +87,8 @@ def handle_action():
     # 使用全局的 LearningSystem 实例
     actionType = request.form['actionType']  # reward, punishment
     action = request.form['action']
-    system.handle_action(actionType, action)
+    log.debug(f"Received action: {action}, type: {actionType}")
+    result = system.handle_action(actionType, action)
     # 重新获取当前状态和行为日志
     # current_level, current_sub_level, current_points = system.get_current_status().split(', ')
     # current_level = current_level.split(': ')[1]
@@ -93,7 +96,7 @@ def handle_action():
     # current_points = current_points.split(': ')[1]
     # action_logs = system.action_logs  # 获取最新的行为日志
     # return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
-    return jsonify({"result": "success"})
+    return jsonify(result)
 
 @app.route("/api/points_data2", methods=['GET'])
 def get_points_data2():
@@ -185,6 +188,7 @@ def get_points_data():
 def get_action_logs():
     # 查询ActionLog表中的数据
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()
+    log.debug(f"Action logs: {action_logs}")
     
     # 将查询结果转换为JSON格式
     logs = [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp.isoformat()} for log in action_logs]
