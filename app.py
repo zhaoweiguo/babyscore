@@ -83,20 +83,49 @@ def get_status():
 @app.route("/api/handle_action", methods=['POST'])
 def handle_action():
     # 使用全局的 LearningSystem 实例
-    actionType = request.form['actionType']
+    actionType = request.form['actionType']  # reward, punishment
     action = request.form['action']
-    if actionType == 'reward':
-        system.handle_action(action)
-    elif actionType == 'punishment':
-        system.handle_action(action)
+    system.handle_action(actionType, action)
     # 重新获取当前状态和行为日志
-    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    current_level = current_level.split(': ')[1]
-    current_sub_level = current_sub_level.split(': ')[1]
-    current_points = current_points.split(': ')[1]
-    action_logs = system.action_logs  # 获取最新的行为日志
-    
-    return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
+    # current_level, current_sub_level, current_points = system.get_current_status().split(', ')
+    # current_level = current_level.split(': ')[1]
+    # current_sub_level = current_sub_level.split(': ')[1]
+    # current_points = current_points.split(': ')[1]
+    # action_logs = system.action_logs  # 获取最新的行为日志
+    # return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
+    return jsonify({"result": "success"})
+
+@app.route("/api/points_data2", methods=['GET'])
+def get_points_data2():
+    # 获取 groupby 参数，默认为 'day'
+    groupby = request.args.get('groupby', 'day')
+    score_type = request.args.get('score_type', 'all') #  "reward", "punishment"
+
+    if score_type=="all":
+        action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()
+    else:
+        # where score_type = "reward"
+        action_logs = session.query(ActionLog).filter(ActionLog.score_type == score_type).order_by(ActionLog.timestamp).all()
+
+
+    key = None
+    grouped_data = {}
+    for log in action_logs:
+        print(f"{log.timestamp}  -  {log.points_change}   -   {log.id}   -  {log.behavior}")
+        if groupby == 'day':
+            key = log.timestamp.strftime('%Y-%m-%d')
+        elif groupby == 'week':
+            key = log.timestamp.strftime('%Y-%U')
+        elif groupby == 'month':
+            key = log.timestamp.strftime('%Y-%m')
+        else:
+            key = log.timestamp.strftime('%Y-%m-%d')
+        if key not in grouped_data:
+            grouped_data[key] = {'points': 0, 'count': 0}
+        grouped_data[key]['points'] += log.points_change
+        grouped_data[key]['count'] += 1
+
+    return jsonify(grouped_data)
 
 @app.route("/api/points_data", methods=['GET'])
 def get_points_data():
@@ -134,7 +163,7 @@ def get_points_data():
                 grouped_data[key] = {'points': 0, 'count': 0}
             grouped_data[key]['points'] += point
             grouped_data[key]['count'] += 1
-        return [{'label': key, 'points': data['points']} for key, data in grouped_data.items()]
+        return [{'label': key, 'points': data['points'], 'count': data['count']} for key, data in grouped_data.items()]
 
     # 初始化数据
     labels = [log['timestamp'] for log in points_data]

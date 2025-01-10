@@ -1,3 +1,5 @@
+from enum import Enum, auto
+
 # 定义等级和小等级
 LEVELS = {
     "小小孩": ["非常初级的", "初级的", "正常的", "厉害的", "非常厉害的"],
@@ -7,6 +9,9 @@ LEVELS = {
     "中大人": ["非常初级的", "初级的", "正常的", "厉害的", "非常厉害的"],
     "大人": ["非常初级的", "初级的", "正常的", "厉害的", "非常厉害的"]
 }
+
+ActionType = Enum("reward", "punishment")
+
 
 # 初始化积分和等级
 from config import POSITIVE_ACTIONS, NEGATIVE_ACTIONS  # 从config.py中导入行为及其对应的积分变化
@@ -32,15 +37,20 @@ class LearningSystem:
     def get_current_status(self):
         return f"当前等级: {self.current_level}, 当前小等级: {self.current_sub_level}, 当前积分: {self.current_points}"
 
-    # 增加积分
-    def add_points(self, points):
+    # update 积分
+    def update_points(self, points):
         self.current_points += points
         self.check_level_up()
 
-    # 扣除积分
-    def deduct_points(self, points):
-        self.current_points = max(0, self.current_points - abs(points))  # 确保积分不会变成负数
-        self.check_level_up()
+    # # 增加积分
+    # def add_points(self, points):
+    #     self.current_points += points
+    #     self.check_level_up()
+
+    # # 扣除积分
+    # def deduct_points(self, points):
+    #     self.current_points = max(0, self.current_points - abs(points))  # 确保积分不会变成负数
+    #     self.check_level_up()
 
     # 检查是否升级
     def check_level_up(self):
@@ -57,14 +67,14 @@ class LearningSystem:
         return [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp} for log in action_logs]
 
     # 处理行为
-    def handle_action(self, action):
-        if action in self.positive_actions:
+    def handle_action(self, actionType, action):
+        if ActionType[actionType] == ActionType.reward:
             points = self.positive_actions[action]
-            self.add_points(points)
+            self.update_points(points)
             self.log_action(action, points)
-        elif action in self.negative_actions:
+        elif ActionType[actionType] == ActionType.punishment:
             points = self.negative_actions[action]
-            self.deduct_points(points)
+            self.update_points(points)
             self.log_action(action, points)
         else:
             print("未知的行为")
