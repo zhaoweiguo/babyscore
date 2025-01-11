@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.inspection import inspect  # 导入inspect模块
 
-from models import Base, ActionLog, engine
+from babyscore.models import Base, ActionLog, engine
 
 # 添加: 创建所有表
 Base.metadata.create_all(engine)

@@ -1,6 +1,7 @@
 
 from datetime import datetime, timezone, timedelta  # 添加 timezone 和 timedelta 导入
-from models import Base, ActionLog, Session, engine
+
+from babyscore.models import Base, ActionLog, Session, engine
 
 
 # 添加时间分组函数

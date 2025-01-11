@@ -3,13 +3,13 @@ from dotenv import load_dotenv  # 添加导入load_dotenv模块
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timezone, timedelta  # 添加 timezone 和 timedelta 导入
 import json
-from logic import LearningSystem  # 添加对 LearningSystem 的导入
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base, ActionLog, Session, engine
 
-from logger import log
-import util_point_chart
+from babyscore.models import Base, ActionLog, Session, engine
+from babyscore.logic import LearningSystem  # 添加对 LearningSystem 的导入
+from babyscore.logger import log
+import babyscore.util_point_chart
 
 # 加载 .env 文件
 load_dotenv("config/.env")
@@ -43,7 +43,7 @@ def show_status():
     current_points = current_points.split(': ')[1]
     # 添加 action_logs 参数的传递
     action_logs = system.action_logs
-    return render_template("status.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
+    return render_template("templates/status.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
 
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():

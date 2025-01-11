@@ -1,6 +1,11 @@
 from enum import Enum, auto
 
-from logger import log
+from babyscore.logger import log
+
+# 初始化积分和等级
+from babyscore.config import ACTIONS  # 从config.py中导入行为及其对应的积分变化
+from babyscore.models import ActionLog  # 添加对模型的导入
+
 
 
 # 定义等级和小等级
@@ -16,12 +21,6 @@ LEVELS = {
 class ActionType(Enum):
     reward="reward"
     punishment="punishment"
-
-
-# 初始化积分和等级
-from config import ACTIONS  # 从config.py中导入行为及其对应的积分变化
-import datetime  # 导入datetime模块以记录时间
-from models import ActionLog  # 添加对模型的导入
 
 class LearningSystem:
     def __init__(self, session):
