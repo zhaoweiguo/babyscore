@@ -6,17 +6,19 @@ import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from babyscore.models import Base, ActionLog, Session, engine
+from babyscore.models import ActionLog, Session, engine
 from babyscore.logic import LearningSystem  # 添加对 LearningSystem 的导入
 from babyscore.logger import log
-import babyscore.util_point_chart
+from babyscore import util_point_chart
+from babyscore.db import create_table
 
 # 加载 .env 文件
 load_dotenv("config/.env")
 
 app = Flask(__name__)
 
-app.static_folder = 'static'
+app.static_folder = '../static'
+app.template_folder = '../templates'
 
 
 session = Session()
@@ -26,7 +28,7 @@ system = LearningSystem(session)
 
 # 添加数据库初始化函数
 def init_db():
-    Base.metadata.create_all(engine)
+    create_table.init_db()
 
 # 在应用启动时初始化数据库
 @app.before_first_request
@@ -37,13 +39,17 @@ def startup_event():
 @app.route("/", methods=['GET'])
 def show_status():
     # 使用全局的 LearningSystem 实例
-    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    current_level = current_level.split(': ')[1]
-    current_sub_level = current_sub_level.split(': ')[1]
-    current_points = current_points.split(': ')[1]
-    # 添加 action_logs 参数的传递
-    action_logs = system.action_logs
-    return render_template("templates/status.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
+    # current_status = system.get_current_status()
+    # current_level = current_status["current_level"]
+    # current_sub_level = current_status["current_sub_level"]
+    # current_points = current_status["current_points"]
+    # # 添加 action_logs 参数的传递
+    # # action_logs = system.action_logs
+    # return render_template("status.html", 
+    #                        current_level=current_level, 
+    #                        current_sub_level=current_sub_level, 
+    #                        current_points=current_points)
+    return render_template("status.html")
 
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
@@ -73,10 +79,11 @@ def show_points_chart():
 @app.route("/api/status", methods=['GET'])
 def get_status():
     # 使用全局的 LearningSystem 实例
-    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    current_level = current_level.split(': ')[1]
-    current_sub_level = current_sub_level.split(': ')[1]
-    current_points = current_points.split(': ')[1]
+    current_status = system.get_current_status()
+    current_level = current_status["current_level"]
+    current_sub_level = current_status["current_sub_level"]
+    current_points = current_status["current_points"]
+
     return jsonify({
         "current_level": current_level,
         "current_sub_level": current_sub_level,

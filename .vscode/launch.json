@@ -15,7 +15,17 @@
             "name": "Python Debugger: main",
             "type": "debugpy",
             "request": "launch",
+            "justMyCode": false,
+
             "module": "main"
+        },
+        {
+            "name": "Python Debugger: db service",
+            "type": "debugpy",
+            "request": "launch",
+            "justMyCode": false,
+
+            "module": "babyscore.db.action_log_service"
         }
     ]
 }
