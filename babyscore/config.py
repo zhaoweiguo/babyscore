@@ -1,3 +1,5 @@
+import os
+
 ACTIONS = {
     "没有发脾气": {"reward", 20},
     "努力完成学习": {"reward", 30},
@@ -7,6 +9,8 @@ ACTIONS = {
     "没有按时睡觉": {"punishment", -10}
     
 }
+
+DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///babyscore.db')
 
 
 # # 定义行为及其对应的积分变化

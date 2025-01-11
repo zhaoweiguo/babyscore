@@ -28,7 +28,7 @@ system = LearningSystem(session)
 
 # 添加数据库初始化函数
 def init_db():
-    create_table.init_db()
+    create_table.create_db()
 
 # 在应用启动时初始化数据库
 @app.before_first_request

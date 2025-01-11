@@ -4,10 +4,12 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 import os
 
+from babyscore import config
+
 Base = declarative_base()
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///babyscore.db')
-engine = create_engine(DATABASE_URI)
+
+engine = create_engine(config.DATABASE_URI)
 Session = sessionmaker(bind=engine)
 
 # Action Log

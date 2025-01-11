@@ -7,7 +7,7 @@ from sqlalchemy.inspection import inspect  # 导入inspect模块
 
 from babyscore.models import Base, ActionLog, engine
 
-def init_db():
+def create_db():
 
     # 添加: 创建所有表
     Base.metadata.create_all(engine)
@@ -20,7 +20,10 @@ def init_db():
     else:
         print("Failed to create table 'action_logs'.")
 
-if __file__ == '__main__':
-    init_db()
+
+if __name__ == '__main__':
+    print("Starting database initialization...")
+    create_db()
+    print("Database initialization completed.")
 
 
