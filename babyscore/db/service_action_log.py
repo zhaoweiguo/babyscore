@@ -1,7 +1,7 @@
 from babyscore.models import ActionLog, Session, engine
 
 from sqlalchemy import func
-
+import datetime
 class ActionLogService:
     
     def __init__(self, session):
@@ -36,8 +36,10 @@ class ActionLogService:
 
 
     # 插入一条行为日志
-    def insert_log_action_item(self, score_type, action, points):
-        new_log = ActionLog(score_type=score_type, behavior=action, points_change=points)
+    def insert_log_action_item(self, score_type, action, points, actionDate):
+        # timestamp = datetime.datetime.strptime(actionDate, "%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.datetime.strptime(actionDate, "%Y-%m-%d")
+        new_log = ActionLog(score_type=score_type, behavior=action, points_change=points, timestamp=timestamp)
         self.session.add(new_log)
         self.session.commit()
 

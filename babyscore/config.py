@@ -6,13 +6,12 @@ from dotenv import load_dotenv  # 添加导入load_dotenv模块
 load_dotenv("config/.env")
 
 ACTIONS = {
-    "没有发脾气": {"reward", 20},
-    "努力完成学习": {"reward", 30},
-    "按时睡觉": {"reward", 10},
-    "发脾气": {"punishment", -20},
-    "没有完成学习": {"punishment", -30},
-    "没有按时睡觉": {"punishment", -10}
-    
+    "没有发脾气": ("reward", 20),
+    "努力完成学习": ("reward", 30),
+    "按时睡觉": ("reward", 10),
+    "发脾气": ("punishment", -20),
+    "没有完成学习": ("punishment", -30),
+    "没有按时睡觉": ("punishment", -10)   
 }
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///babyscore.db')

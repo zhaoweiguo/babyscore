@@ -78,11 +78,11 @@ class LearningSystem:
 
 
     # 处理行为
-    def handle_action(self, actionType, action):
+    def handle_action(self, actionType, action, actionDate):
         if actionType == ActionType.reward.name or actionType == ActionType.punishment.name:
             score_type, points = self.actions[action]
             self.update_points(score_type, points)
-            self.service_action_log.insert_log_action_item(score_type, action, points)
+            self.service_action_log.insert_log_action_item(score_type, action, points, actionDate)
             self.action_logs = self.service_action_log.get_action_logs_from_db()  # 更新行为日志列表
         else:
             log.warning("未知的行为")

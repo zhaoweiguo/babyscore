@@ -29,6 +29,10 @@
             <div class="tab-pane fade show active" id="reward" role="tabpanel" aria-labelledby="reward-tab">
                 <form id="rewardForm">
                     <div class="form-group">
+                        <label for="actionDate">选择日期:</label>
+                        <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
+                    </div>
+                    <div class="form-group">
                         <label for="rewardAction">选择奖励行为:</label>
                         <select name="rewardAction" id="rewardAction" class="form-control">
                             <option value="没有发脾气">没有发脾气</option>
@@ -43,6 +47,10 @@
             <div class="tab-pane fade" id="punishment" role="tabpanel" aria-labelledby="punishment-tab">
                 <form id="punishmentForm">
                     <div class="form-group">
+                        <label for="actionDate">选择日期:</label>
+                        <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
+                    </div>
+                    <div class="form-group">
                         <label for="punishmentAction">选择惩罚行为:</label>
                         <select name="punishmentAction" id="punishmentAction" class="form-control">
                             <option value="发脾气">发脾气</option>
@@ -53,6 +61,11 @@
                     <button type="submit" class="btn btn-danger">惩罚行为</button>
                 </form>
             </div>
+        </div>
+
+        <!-- 添加浮框用于显示提交结果 -->
+        <div id="alertBox" class="alert alert-success mt-4" role="alert" style="display: none;">
+            行为已成功提交！
         </div>
 
         <script>
@@ -69,15 +82,17 @@
 
                     const formData = new FormData(this);
                     const action = formData.get('rewardAction');
+                    const actionDate = formData.get('actionDate');
 
                     console.log('Selected reward action:', action);  // 添加调试日志
+                    console.log('Selected date:', actionDate);  // 添加调试日志
 
                     fetch('/api/handle_action', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({ actionType: 'reward', action: action }).toString(),
+                        body: new URLSearchParams({ actionType: 'reward', action: action, actionDate: actionDate }).toString(),
                     })
                     .then(response => {
                         console.log('Response status:', response.status);  // 添加调试日志
@@ -90,6 +105,9 @@
                         $('#currentLevel').text(data.current_level);
                         $('#currentSubLevel').text(data.current_sub_level);
                         $('#currentPoints').text(data.current_points);
+
+                        // 显示成功提示浮框
+                        $('#alertBox').show().delay(3000).fadeOut();
                     })
                     .catch(error => {
                         console.error('Error:', error);  // 添加调试日志
@@ -102,15 +120,17 @@
 
                     const formData = new FormData(this);
                     const action = formData.get('punishmentAction');
+                    const actionDate = formData.get('actionDate');
 
                     console.log('Selected punishment action:', action);  // 添加调试日志
+                    console.log('Selected date:', actionDate);  // 添加调试日志
 
                     fetch('/api/handle_action', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({ actionType: 'punishment', action: action }).toString(),
+                        body: new URLSearchParams({ actionType: 'punishment', action: action, actionDate: actionDate }).toString(),
                     })
                     .then(response => {
                         console.log('Response status:', response.status);  // 添加调试日志
@@ -123,6 +143,9 @@
                         $('#currentLevel').text(data.current_level);
                         $('#currentSubLevel').text(data.current_sub_level);
                         $('#currentPoints').text(data.current_points);
+
+                        // 显示成功提示浮框
+                        $('#alertBox').show().delay(3000).fadeOut();
                     })
                     .catch(error => {
                         console.error('Error:', error);  // 添加调试日志

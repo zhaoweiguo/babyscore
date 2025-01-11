@@ -46,7 +46,8 @@ def show_action_logs():
 
 @app.route("/settings", methods=['GET'])
 def show_settings():
-    return render_template("settings.html")
+    today = datetime.now().strftime('%Y-%m-%d')  # 获取当前日期
+    return render_template("settings.html", today=today)
 
 @app.route("/points_chart", methods=['GET'])
 def show_points_chart():
@@ -73,8 +74,9 @@ def handle_action():
     # 使用全局的 LearningSystem 实例
     actionType = request.form['actionType']  # reward, punishment
     action = request.form['action']
-    log.debug(f"Received action: {action}, type: {actionType}")
-    result = system.handle_action(actionType, action)
+    actionDate = request.form.get('actionDate', datetime.now().strftime('%Y-%m-%d'))  # 获取选择的日期，默认为当前日期
+    log.debug(f"Received action: {action}, type: {actionType}, date: {actionDate}")
+    result = system.handle_action(actionType, action, actionDate)  # 传递日期参数
     return jsonify(result)
 
 @app.route("/api/points_data", methods=['GET'])
@@ -102,4 +104,3 @@ def get_action_logs():
     # 将查询结果转换为JSON格式
     logs = [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp.isoformat()} for log in action_logs]
     return jsonify(logs)
-
