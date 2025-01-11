@@ -132,7 +132,7 @@ fetch('/api/points_data')
             const selectedUnit = event.target.value;
 
             // 发送请求以获取新的分组数据
-            fetch(`/api/points_data?groupby=${selectedUnit}`)
+            fetch(`/api/points_data?time_unit=${selectedUnit}`)
                 .then(response => response.json())
                 .then(data => {
                     const totalGroupedData = data.total;
@@ -178,3 +178,9 @@ fetch('/api/points_data')
         });
     })
     .catch(error => console.error('Error fetching action logs:', error));
+
+function formatLabels(data, timeUnit) {
+    if (timeUnit === 'week') {
+        data.labels = data.labels.map(label => label.replace('W', ' 第').replace('-', '周 '));
+    }
+}

@@ -84,12 +84,12 @@ def get_points_data():
     group_by = request.args.get('group_by', "all")
     # 使用全局的 LearningSystem 实例
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
-    # 获取 groupby 参数，默认为 'day'
-    groupby = request.args.get('groupby', 'day')
+    # 获取 time_unit 参数，默认为 'day'
+    time_unit = request.args.get('time_unit', 'day')
 
     # 默认按总积分计算
     if group_by == 'all':
-        grouped_list = util_point_chart.group_by_time_unit(action_logs, groupby)
+        grouped_list = util_point_chart.group_by_time_unit(action_logs, time_unit)
     # 根据score_type参数进行分组
     # @todo
 

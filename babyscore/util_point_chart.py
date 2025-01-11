@@ -17,7 +17,7 @@ def group_by_time_unit(action_list: list["ActionLog"], unit: str):
             key = date.strftime('%Y-%m-%d')
         elif unit == 'week':
             # 修改: 使用 %Y-%U 格式化为 yyyy-week
-            key = date.strftime('%Y-%U')
+            key = date.strftime('%Y-W%U')
         elif unit == 'month':
             # 修改: 使用 %Y-%m 格式化为 yyyy-month
             key = date.strftime('%Y-%m')
