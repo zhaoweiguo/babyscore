@@ -61,6 +61,7 @@ class LearningSystem:
         elif score_type == "reward":
             self.current_reward_points += points
         else:
+            log.error("Invalid score type")
             raise ValueError("Invalid score type")
         self.check_level_up()
 
