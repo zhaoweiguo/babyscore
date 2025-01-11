@@ -33,7 +33,7 @@ fetch('/api/points_data')
                         type: 'time',
                         time: {
                             unit: 'day',  // 默认时间单位为天
-                            tooltipFormat: 'yyyy-MM-dd HH:mm:ss'  // 添加时间提示格式
+                            tooltipFormat: 'yyyy年MM月dd日'  // 添加时间提示格式
                         },
                         title: {
                             display: true,
@@ -71,7 +71,7 @@ fetch('/api/points_data')
                         type: 'time',
                         time: {
                             unit: 'day',  // 默认时间单位为天
-                            tooltipFormat: 'yyyy-MM-dd HH:mm:ss'  // 添加时间提示格式
+                            tooltipFormat: 'yyyy年MM月dd日'  // 添加时间提示格式
                         },
                         title: {
                             display: true,
@@ -109,7 +109,7 @@ fetch('/api/points_data')
                         type: 'time',
                         time: {
                             unit: 'day',  // 默认时间单位为天
-                            tooltipFormat: 'yyyy-MM-dd HH:mm:ss'  // 添加时间提示格式
+                            tooltipFormat: 'yyyy年MM月dd日'  // 添加时间提示格式
                         },
                         title: {
                             display: true,
@@ -138,6 +138,7 @@ fetch('/api/points_data')
                     const totalGroupedData = data.total;
                     const rewardGroupedData = data.rewards;
                     const punishmentGroupedData = data.punishments;
+                    console.log(data)
 
                     let totalChartLabels = totalGroupedData.map(item => item.label);
                     let totalChartData = totalGroupedData.map(item => item.points);
@@ -146,10 +147,23 @@ fetch('/api/points_data')
                     let punishmentChartLabels = punishmentGroupedData.map(item => item.label);
                     let punishmentChartData = punishmentGroupedData.map(item => item.points);
 
+                    // 格式化标签
+                    formatLabels({ labels: totalChartLabels }, selectedUnit);
+                    formatLabels({ labels: rewardChartLabels }, selectedUnit);
+                    formatLabels({ labels: punishmentChartLabels }, selectedUnit);
+
                     // 更新图表数据
                     totalChart.data.labels = totalChartLabels;
                     totalChart.data.datasets[0].data = totalChartData;
                     totalChart.options.scales.x.time.unit = selectedUnit;
+                    if (selectedUnit === 'month') {
+                        totalChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月';
+                    } else if (selectedUnit === 'week') {
+                        totalChart.options.scales.x.time.tooltipFormat = 'yyyy年ww周'; // 显示周
+                    }
+                    else {
+                        totalChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月dd日';
+                    }
                     totalChart.update();
 
                     rewardChart.data.labels = rewardChartLabels;
@@ -181,6 +195,9 @@ fetch('/api/points_data')
 
 function formatLabels(data, timeUnit) {
     if (timeUnit === 'week') {
-        data.labels = data.labels.map(label => label.replace('W', ' 第').replace('-', '周 '));
+        data.labels = data.labels.map(label => {
+            const [year, week] = label.split('-W');
+            return `${year} 第${week.padStart(2, '0')}周`;
+        });
     }
 }
