@@ -138,7 +138,7 @@ fetch('/api/points_data')
                     const totalGroupedData = data.total;
                     const rewardGroupedData = data.rewards;
                     const punishmentGroupedData = data.punishments;
-                    console.log(data)
+                    // console.log(data)
 
                     let totalChartLabels = totalGroupedData.map(item => item.label);
                     let totalChartData = totalGroupedData.map(item => item.points);
@@ -156,12 +156,12 @@ fetch('/api/points_data')
                     totalChart.data.labels = totalChartLabels;
                     totalChart.data.datasets[0].data = totalChartData;
                     totalChart.options.scales.x.time.unit = selectedUnit;
+
                     if (selectedUnit === 'month') {
                         totalChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月';
                     } else if (selectedUnit === 'week') {
                         totalChart.options.scales.x.time.tooltipFormat = 'yyyy年ww周'; // 显示周
-                    }
-                    else {
+                    } else {
                         totalChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月dd日';
                     }
                     totalChart.update();
@@ -169,11 +169,25 @@ fetch('/api/points_data')
                     rewardChart.data.labels = rewardChartLabels;
                     rewardChart.data.datasets[0].data = rewardChartData;
                     rewardChart.options.scales.x.time.unit = selectedUnit;
+                    if (selectedUnit === 'month') {
+                        rewardChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月';
+                    } else if (selectedUnit === 'week') {
+                        rewardChart.options.scales.x.time.tooltipFormat = 'yyyy年ww周'; // 显示周
+                    } else {
+                        rewardChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月dd日';
+                    }
                     rewardChart.update();
 
                     punishmentChart.data.labels = punishmentChartLabels;
                     punishmentChart.data.datasets[0].data = punishmentChartData;
                     punishmentChart.options.scales.x.time.unit = selectedUnit;
+                    if (selectedUnit === 'month') {
+                        punishmentChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月';
+                    } else if (selectedUnit === 'week') {
+                        punishmentChart.options.scales.x.time.tooltipFormat = 'yyyy年ww周'; // 显示周
+                    } else {
+                        punishmentChart.options.scales.x.time.tooltipFormat = 'yyyy年MM月dd日';
+                    }
                     punishmentChart.update();
                 })
                 .catch(error => console.error('Error fetching action logs:', error));

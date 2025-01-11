@@ -104,3 +104,5 @@ def get_action_logs():
     # 将查询结果转换为JSON格式
     logs = [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp.isoformat()} for log in action_logs]
     return jsonify(logs)
+
+
