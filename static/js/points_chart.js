@@ -148,9 +148,9 @@ fetch('/api/points_data')
                     let punishmentChartData = punishmentGroupedData.map(item => item.points);
 
                     // 格式化标签
-                    formatLabels({ labels: totalChartLabels }, selectedUnit);
-                    formatLabels({ labels: rewardChartLabels }, selectedUnit);
-                    formatLabels({ labels: punishmentChartLabels }, selectedUnit);
+                    // formatLabels({ labels: totalChartLabels }, selectedUnit);
+                    // formatLabels({ labels: rewardChartLabels }, selectedUnit);
+                    // formatLabels({ labels: punishmentChartLabels }, selectedUnit);
 
                     // 更新图表数据
                     totalChart.data.labels = totalChartLabels;
@@ -207,11 +207,13 @@ fetch('/api/points_data')
     })
     .catch(error => console.error('Error fetching action logs:', error));
 
-function formatLabels(data, timeUnit) {
-    if (timeUnit === 'week') {
-        data.labels = data.labels.map(label => {
-            const [year, week] = label.split('-W');
-            return `${year} 第${week.padStart(2, '0')}周`;
-        });
-    }
-}
+// function formatLabels(data, timeUnit) {
+//     if (timeUnit === 'week') {
+//         data.labels = data.labels.map(label => {
+//             const [year, week] = label.split('-W');
+//             return `${year} 第${week.padStart(2, '0')}周`;
+//         });
+//     }
+// }
+
+
