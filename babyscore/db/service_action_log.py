@@ -12,6 +12,11 @@ class ActionLogService:
         total_points = self.session.query(func.sum(ActionLog.points_change)).scalar()
         reward_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type == 'reward').scalar()
         punishment_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type == 'punishment').scalar()
+
+        total_points = total_points or 0
+        reward_points = reward_points or 0
+        punishment_points = punishment_points or 0
+
         return {
             "total_points": total_points,
             "reward_points": reward_points,
