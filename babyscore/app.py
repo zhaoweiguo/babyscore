@@ -1,5 +1,4 @@
 import os  # 添加导入os模块
-from dotenv import load_dotenv  # 添加导入load_dotenv模块
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timezone, timedelta  # 添加 timezone 和 timedelta 导入
 import json
@@ -12,8 +11,6 @@ from babyscore.logger import log
 from babyscore import util_point_chart
 from babyscore.db import create_table
 
-# 加载 .env 文件
-load_dotenv("config/.env")
 
 app = Flask(__name__)
 
@@ -23,18 +20,21 @@ app.template_folder = '../templates'
 
 session = Session()
 
+print("============================Database initialized start")
+create_table.create_db()
+print("============================Database initialized end")
 # 创建全局的 LearningSystem 实例
 system = LearningSystem(session)
 
 # 添加数据库初始化函数
-def init_db():
-    create_table.create_db()
+# def init_db():
+#     create_table.create_db()
 
 # 在应用启动时初始化数据库
-@app.before_first_request
-def startup_event():
-    print("============================Database initialized")
-    init_db()
+# @app.before_first_request
+# def startup_event():
+#     print("============================Database initialized")
+#     init_db()
 
 @app.route("/", methods=['GET'])
 def show_status():

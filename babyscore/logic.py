@@ -55,6 +55,7 @@ class LearningSystem:
 
     # update 积分
     def update_points(self, score_type, points):
+        log.info(f"------- update_points: {score_type} {points}")
         self.current_points += points
         if score_type == "punishment":
             self.current_punishment_points += points

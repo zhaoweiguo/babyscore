@@ -1,4 +1,9 @@
 import os
+from dotenv import load_dotenv  # 添加导入load_dotenv模块
+
+
+# 加载 .env 文件
+load_dotenv("config/.env")
 
 ACTIONS = {
     "没有发脾气": {"reward", 20},
