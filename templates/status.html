@@ -14,10 +14,6 @@
     {% include 'navbar.html' %}
     <div class="container mt-4">
         <h1>欢迎来到宝宝积分系统</h1>
-        <!-- 添加图片展示区域 -->
-        <div id="imageContainer" class="text-center">
-            <img id="randomImage" src="" alt="随机图片" style="max-width: 100%; height: auto;">
-        </div>
         <div class="row">
             <div class="col-md-4">
                 <p>当前等级: <span id="currentLevel"></span></p>
@@ -40,7 +36,12 @@
                 </div>
             </div>
         </div>
+        <br />
 
+        <!-- 添加图片展示区域 -->
+        <div id="imageContainer" class="text-center">
+            <img src="/static/images/3.jpeg" alt="随机图片" style="max-width: 100%; height: auto;">
+        </div>
 
     </div>
     <!-- 引入 Bootstrap JS 和依赖 -->
