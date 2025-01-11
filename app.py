@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, ActionLog, Session, engine
 
 from logger import log
+import util_point_chart
 
 # 加载 .env 文件
 load_dotenv("config/.env")
@@ -132,57 +133,40 @@ def get_points_data2():
 
 @app.route("/api/points_data", methods=['GET'])
 def get_points_data():
+    group_by = request.args.get('group_by', "all")
     # 使用全局的 LearningSystem 实例
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
     points_data = []
-    for log in action_logs:
-        # 将时间戳转换为东八区时间
-        timestamp_east8 = log.timestamp.astimezone(timezone(timedelta(hours=8)))
-        points_data.append({
-            'timestamp': timestamp_east8.isoformat(),
-            'points_change': log.points_change
-        })
+    # for log in action_logs:
+    #     # 将时间戳转换为东八区时间
+    #     timestamp_east8 = log.timestamp.astimezone(timezone(timedelta(hours=8)))
+    #     points_data.append({
+    #         'timestamp': timestamp_east8.isoformat(),
+    #         'points_change': log.points_change,
+    #         'behavior': log.behavior,
+    #         "score_type": log.score_type
+    #     })
 
     # 获取 groupby 参数，默认为 'day'
     groupby = request.args.get('groupby', 'day')
 
-    # 添加时间分组函数
-    def group_by_time_unit(labels, points, unit):
-        grouped_data = {}
-        for label, point in zip(labels, points):
-            date = datetime.fromisoformat(label)
-            key = None
-            if unit == 'day':
-                key = date.strftime('%Y-%m-%d')
-            elif unit == 'week':
-                # 修改: 使用 %Y-%U 格式化为 yyyy-week
-                key = date.strftime('%Y-%U')
-            elif unit == 'month':
-                # 修改: 使用 %Y-%m 格式化为 yyyy-month
-                key = date.strftime('%Y-%m')
-            else:
-                key = date.strftime('%Y-%m-%d')
-            if key not in grouped_data:
-                grouped_data[key] = {'points': 0, 'count': 0}
-            grouped_data[key]['points'] += point
-            grouped_data[key]['count'] += 1
-        return [{'label': key, 'points': data['points'], 'count': data['count']} for key, data in grouped_data.items()]
+    # 默认按总积分计算
+    if group_by == 'all':
+        grouped_list = util_point_chart.group_by_time_unit(action_logs, groupby)
+        
+        # labels = [log['timestamp'] for log in points_data]
+        # points = [log['points_change'] for log in points_data]
+        # rewards = [point for point in points if point > 0]
+        # punishments = [point for point in points if point < 0]
 
-    # 初始化数据
-    labels = [log['timestamp'] for log in points_data]
-    points = [log['points_change'] for log in points_data]
-    rewards = [point for point in points if point > 0]
-    punishments = [point for point in points if point < 0]
+    # 根据score_type参数进行分组
+    # @todo
 
-    total_grouped_data = group_by_time_unit(labels, points, groupby)
-    reward_grouped_data = group_by_time_unit(labels, rewards, groupby)
-    punishment_grouped_data = group_by_time_unit(labels, punishments, groupby)
+    # total_grouped_data = group_by_time_unit(labels, points, groupby)
+    # reward_grouped_data = group_by_time_unit(labels, rewards, groupby)
+    # punishment_grouped_data = group_by_time_unit(labels, punishments, groupby)
 
-    return jsonify({
-        'total': total_grouped_data,
-        'rewards': reward_grouped_data,
-        'punishments': punishment_grouped_data
-    })
+    return jsonify(grouped_list)
 
 @app.route("/api/get_action_logs/", methods=['GET'])
 def get_action_logs():
