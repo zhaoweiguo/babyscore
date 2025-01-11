@@ -38,41 +38,19 @@ def startup_event():
 
 @app.route("/", methods=['GET'])
 def show_status():
-    # 使用全局的 LearningSystem 实例
-    # current_status = system.get_current_status()
-    # current_level = current_status["current_level"]
-    # current_sub_level = current_status["current_sub_level"]
-    # current_points = current_status["current_points"]
-    # # 添加 action_logs 参数的传递
-    # # action_logs = system.action_logs
-    # return render_template("status.html", 
-    #                        current_level=current_level, 
-    #                        current_sub_level=current_sub_level, 
-    #                        current_points=current_points)
     return render_template("status.html")
 
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
-    # 使用全局的 LearningSystem 实例
-    action_logs = system.action_logs
-    return render_template("action_logs.html", action_logs=action_logs)
+    return render_template("action_logs.html")
 
 @app.route("/settings", methods=['GET'])
 def show_settings():
-    # 使用全局的 LearningSystem 实例
-    current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    current_level = current_level.split(': ')[1]
-    current_sub_level = current_sub_level.split(': ')[1]
-    current_points = current_points.split(': ')[1]
-    # 传递行为日志列表到模板
-    action_logs = system.action_logs
-    return render_template("settings.html", current_level=current_level, current_sub_level=current_sub_level, current_points=current_points, action_logs=action_logs)
+    return render_template("settings.html")
 
 @app.route("/points_chart", methods=['GET'])
 def show_points_chart():
-    # 使用全局的 LearningSystem 实例
-    action_logs = system.action_logs
-    return render_template("points_chart.html", action_logs=action_logs)
+    return render_template("points_chart.html")
 
 
 
@@ -97,81 +75,21 @@ def handle_action():
     action = request.form['action']
     log.debug(f"Received action: {action}, type: {actionType}")
     result = system.handle_action(actionType, action)
-    # 重新获取当前状态和行为日志
-    # current_level, current_sub_level, current_points = system.get_current_status().split(', ')
-    # current_level = current_level.split(': ')[1]
-    # current_sub_level = current_sub_level.split(': ')[1]
-    # current_points = current_points.split(': ')[1]
-    # action_logs = system.action_logs  # 获取最新的行为日志
-    # return jsonify({"current_level": current_level, "current_sub_level": current_sub_level, "current_points": current_points, "action_logs": action_logs})
     return jsonify(result)
-
-@app.route("/api/points_data2", methods=['GET'])
-def get_points_data2():
-    # 获取 groupby 参数，默认为 'day'
-    groupby = request.args.get('groupby', 'day')
-    score_type = request.args.get('score_type', 'all') #  "reward", "punishment"
-
-    if score_type=="all":
-        action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()
-    else:
-        # where score_type = "reward"
-        action_logs = session.query(ActionLog).filter(ActionLog.score_type == score_type).order_by(ActionLog.timestamp).all()
-
-
-    key = None
-    grouped_data = {}
-    for log in action_logs:
-        print(f"{log.timestamp}  -  {log.points_change}   -   {log.id}   -  {log.behavior}")
-        if groupby == 'day':
-            key = log.timestamp.strftime('%Y-%m-%d')
-        elif groupby == 'week':
-            key = log.timestamp.strftime('%Y-%U')
-        elif groupby == 'month':
-            key = log.timestamp.strftime('%Y-%m')
-        else:
-            key = log.timestamp.strftime('%Y-%m-%d')
-        if key not in grouped_data:
-            grouped_data[key] = {'points': 0, 'count': 0}
-        grouped_data[key]['points'] += log.points_change
-        grouped_data[key]['count'] += 1
-
-    return jsonify(grouped_data)
 
 @app.route("/api/points_data", methods=['GET'])
 def get_points_data():
     group_by = request.args.get('group_by', "all")
     # 使用全局的 LearningSystem 实例
     action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()  # 修改: 从数据库查询ActionLog对象
-    points_data = []
-    # for log in action_logs:
-    #     # 将时间戳转换为东八区时间
-    #     timestamp_east8 = log.timestamp.astimezone(timezone(timedelta(hours=8)))
-    #     points_data.append({
-    #         'timestamp': timestamp_east8.isoformat(),
-    #         'points_change': log.points_change,
-    #         'behavior': log.behavior,
-    #         "score_type": log.score_type
-    #     })
-
     # 获取 groupby 参数，默认为 'day'
     groupby = request.args.get('groupby', 'day')
 
     # 默认按总积分计算
     if group_by == 'all':
         grouped_list = util_point_chart.group_by_time_unit(action_logs, groupby)
-        
-        # labels = [log['timestamp'] for log in points_data]
-        # points = [log['points_change'] for log in points_data]
-        # rewards = [point for point in points if point > 0]
-        # punishments = [point for point in points if point < 0]
-
     # 根据score_type参数进行分组
     # @todo
-
-    # total_grouped_data = group_by_time_unit(labels, points, groupby)
-    # reward_grouped_data = group_by_time_unit(labels, rewards, groupby)
-    # punishment_grouped_data = group_by_time_unit(labels, punishments, groupby)
 
     return jsonify(grouped_list)
 
