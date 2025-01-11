@@ -32,11 +32,13 @@ class LearningSystem:
 
         self.current_level = "小小孩"
         self.current_sub_level = "非常初级的"
-        # self.current_points = self.points_list['total_points']
-        # self.current_reward_points = self.points_list['reward_points']
-        # self.current_punishment_points = self.points_list['punishment_points']
         self.sub_level_points = 100
+
         self.points_list = self.service_action_log.get_sum_from_db()
+        self.current_points = self.points_list['total_points']
+        self.current_reward_points = self.points_list['reward_points']
+        self.current_punishment_points = self.points_list['punishment_points']
+
         self.action_logs = self.service_action_log.get_action_logs_from_db()  # 更新行为日志列表
 
         # 从config.py中读取行为及其对应的积分变化
@@ -52,8 +54,14 @@ class LearningSystem:
         }
 
     # update 积分
-    def update_points(self, points):
+    def update_points(self, score_type, points):
         self.current_points += points
+        if score_type == "punishment":
+            self.current_punishment_points += points
+        elif score_type == "reward":
+            self.current_reward_points += points
+        else:
+            raise ValueError("Invalid score type")
         self.check_level_up()
 
     # 检查是否升级
@@ -71,7 +79,7 @@ class LearningSystem:
     def handle_action(self, actionType, action):
         if actionType == ActionType.reward.name or actionType == ActionType.punishment.name:
             score_type, points = self.actions[action]
-            self.update_points(points)
+            self.update_points(score_type, points)
             self.service_action_log.insert_log_action_item(score_type, action, points)
             self.action_logs = self.service_action_log.get_action_logs_from_db()  # 更新行为日志列表
         else:
