@@ -43,12 +43,18 @@ def show_status():
 
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
-    return render_template("action_logs.html")
+    admin_param = request.args.get('isadmin', default='false').lower()
+    isadmin = admin_param == 'true' or admin_param == '1'
+
+    return render_template('action_logs.html', isadmin=isadmin)
 
 @app.route("/settings", methods=['GET'])
 def show_settings():
+    admin_param = request.args.get('isadmin', default='true').lower()
+    isadmin = admin_param == 'true' or admin_param == '1'
+
     today = datetime.now().strftime('%Y-%m-%d')  # 获取当前日期
-    return render_template("settings.html", today=today)
+    return render_template("settings.html", today=today, isadmin=isadmin)
 
 @app.route("/points_chart", methods=['GET'])
 def show_points_chart():
@@ -110,6 +116,17 @@ def get_action_logs():
         } for log in action_logs]
     return jsonify(logs)
 
+# DELETE /api/delete_action_log/
+@app.route("/api/delete_action_log/<int:id>", methods=['DELETE'])
+def delete_action_log(id):
+    action_log = session.query(ActionLog).filter_by(id=id).first()
+    if action_log:
+        session.delete(action_log)
+        session.commit()
+        return jsonify({'message': 'Action log deleted successfully'})
+    else:
+        return jsonify({'message': 'Action log not found'}), 404
+
 
 @app.route("/api/reward_actions", methods=['GET'])
 def get_actions():
@@ -128,3 +145,8 @@ def get_actions():
         "rewardActions": rewardActions,
         "punishmentActions": punishmentActions
     })
+
+
+
+
+
