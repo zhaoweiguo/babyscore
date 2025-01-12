@@ -52,9 +52,12 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="progress">
-                    <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%; color: black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000">
-                        0 / 0
+                    <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000">
+
                     </div>
+                </div>
+                <div id="progressBarText" class="text-center" style="margin-top: -20px; position: relative; z-index: 1;">
+                    0 / 0
                 </div>
             </div>
         </div>
@@ -86,6 +89,7 @@
                 
                 // 更新进度条
                 var progressBar = $('#progressBar');
+                var progressBarText = $('#progressBarText');
                 var totalPoints = 1000; // 假设总积分是100
                 var currentPoints = parseInt(data.current_total_points);
 
@@ -96,7 +100,7 @@
 
                 var progressPercentage = (currentPoints / totalPoints) * 100;
                 progressBar.css('width', progressPercentage + '%');
-                progressBar.text(currentPoints + ' / ' + totalPoints);
+                progressBarText.text(currentPoints + ' / ' + totalPoints);
             });
 
         });
