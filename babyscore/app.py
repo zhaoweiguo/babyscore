@@ -103,6 +103,7 @@ def get_action_logs():
     
     # 将查询结果转换为JSON格式，timestamp转换为YYYY-MM-DD格式
     logs = [{
+            'id': log.id,
             'behavior': log.behavior, 
             'points_change': log.points_change, 
             'timestamp': log.timestamp.strftime("%Y-%m-%d")

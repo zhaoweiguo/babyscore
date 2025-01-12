@@ -11,15 +11,13 @@
 <body>
     {% include 'navbar.html' %}
     <h1>行为日志</h1>
-    <!-- 删除: <ul id="actionLogs">
-        <!-- 行为日志将通过API动态插入 -->
-    <!-- 删除: </ul> -->
     <table id="actionLogsTable" class="table table-striped">
         <thead>
             <tr>
                 <th>行为</th>
                 <th>积分变化</th>
                 <th>时间</th>
+                <th>操作</th> <!-- 添加操作列 -->
             </tr>
         </thead>
         <tbody>
@@ -40,8 +38,28 @@
                         <td>${log.behavior}</td>
                         <td>${log.points_change}</td>
                         <td>${log.timestamp}</td>
+                        <td><button class="btn btn-danger delete-btn" data-id="${log.id}">删除</button></td> <!-- 添加删除按钮 -->
                     `;
                     actionLogsTableBody.appendChild(tr);
+                });
+
+                // 添加删除按钮的点击事件监听器
+                $('.delete-btn').on('click', function(event) {
+                    const logId = $(this).data('id');
+                    if (confirm('确定要删除这条记录吗？')) {
+                        $.ajax({
+                            url: `/api/delete_action_log/${logId}/`,
+                            method: 'DELETE',
+                            success: function(response) {
+                                console.log('记录删除成功', response);
+                                // 从表格中移除对应的行
+                                $(event.target).closest('tr').remove();
+                            },
+                            error: function(error) {
+                                console.error('删除记录失败', error);
+                            }
+                        });
+                    }
                 });
             });
         });
