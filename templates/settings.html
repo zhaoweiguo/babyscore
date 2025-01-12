@@ -35,9 +35,7 @@
                     <div class="form-group">
                         <label for="rewardAction">选择奖励行为:</label>
                         <select name="rewardAction" id="rewardAction" class="form-control">
-                            <option value="没有发脾气">没有发脾气</option>
-                            <option value="努力完成学习">努力完成学习</option>
-                            <option value="按时睡觉">按时睡觉</option>
+
                         </select>
                     </div>
                     <button type="submit" class="btn btn-success">奖励行为</button>
@@ -51,11 +49,9 @@
                         <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
                     </div>
                     <div class="form-group">
-                        <label for="punishmentAction">选择惩罚行为:</label>
+                        <label for="rewardAction">选择惩罚行为:</label>
                         <select name="punishmentAction" id="punishmentAction" class="form-control">
-                            <option value="发脾气">发脾气</option>
-                            <option value="没有完成学习">没有完成学习</option>
-                            <option value="没有按时睡觉">没有按时睡觉</option>
+
                         </select>
                     </div>
                     <button type="submit" class="btn btn-danger">惩罚行为</button>
@@ -151,6 +147,32 @@
                         console.error('Error:', error);  // 添加调试日志
                     });
                 });
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('/api/reward_actions')
+                    .then(response => response.json())
+                    .then(data => {
+                        rewardActions = data.rewardActions;
+                        punishmentActions = data.punishmentActions;
+                        const rewardActionElement = document.getElementById('rewardAction');
+                        rewardActions.forEach(action => {
+                            const option = document.createElement('option');
+                            // option.value = action.value;
+                            option.value = action.text;
+                            option.textContent = action.text;
+                            rewardActionElement.appendChild(option);
+                        });
+                        const punishmentActionElement = document.getElementById('punishmentAction');
+                        punishmentActions.forEach(action => {
+                            const option = document.createElement('option');
+                            // option.value = action.value;
+                            option.value = action.text;
+                            option.textContent = action.text;
+                            punishmentActionElement.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching reward actions:', error));
             });
         </script>
     </div>

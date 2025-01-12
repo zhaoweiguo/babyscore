@@ -10,6 +10,7 @@ from babyscore.logic import LearningSystem  # 添加对 LearningSystem 的导入
 from babyscore.logger import log
 from babyscore import util_point_chart
 from babyscore.db import create_table
+from babyscore import config
 
 
 app = Flask(__name__)
@@ -105,3 +106,20 @@ def get_action_logs():
     return jsonify(logs)
 
 
+@app.route("/api/reward_actions", methods=['GET'])
+def get_actions():
+    """获取行为列表"""
+    actions = config.ACTIONS
+    rewardActions = []
+    punishmentActions = []
+    for k, v in actions.items():
+        action_type, score = v
+        item = {"value": score, "text": k}
+        if action_type=="punishment":
+            punishmentActions.append(item)
+        elif action_type=="reward":
+            rewardActions.append(item)
+    return jsonify({
+        "rewardActions": rewardActions,
+        "punishmentActions": punishmentActions
+    })
