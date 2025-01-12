@@ -10,7 +10,6 @@
 </head>
 <body>
     
-    <h1>行为日志</h1>
     <div id="navbar-container">
         <!-- 导航栏将根据 isAdmin 变量动态加载 -->
         {% if isadmin %}
@@ -19,6 +18,7 @@
             {% include 'navbar.html' %}
         {% endif %}
     </div>
+    <h1>行为日志</h1>
     <table id="actionLogsTable" class="table table-striped">
         <thead>
             <tr>

@@ -56,7 +56,7 @@
             <div class="tab-pane fade" id="punishment" role="tabpanel" aria-labelledby="punishment-tab">
                 <form id="punishmentForm">
                     <div class="form-group">
-                        <label for="rewardAction">选择惩罚行为:</label>
+                        <label for="punishmentAction">选择惩罚行为:</label>
                         <select name="punishmentAction" id="punishmentAction" class="form-control">
 
                         </select>
@@ -68,7 +68,7 @@
             <div class="tab-pane fade" id="exchange" role="tabpanel" aria-labelledby="exchange-tab">
                 <form id="exchangeForm">
                     <div class="form-group">
-                        <label for="rewardAction">选择兑换行为:</label>
+                        <label for="exchangeAction">选择兑换行为:</label>
                         <select name="exchangeAction" id="exchangeAction" class="form-control">
 
                         </select>
@@ -79,8 +79,11 @@
         </div>
 
         <!-- 添加浮框用于显示提交结果 -->
-        <div id="alertBox" class="alert alert-success mt-4" role="alert" style="display: none;">
+        <div id="alertOkBox" class="alert alert-success mt-4" role="alert" style="display: none;">
             行为已成功提交！
+        </div>
+        <div id="alertErrorBox" class="alert alert-danger mt-4" role="alert" style="display: none;">
+            行为提交失败！
         </div>
 
         <script>
@@ -93,80 +96,63 @@
 
                 // 添加事件监听器以处理奖励行为表单提交
                 document.getElementById('rewardForm').addEventListener('submit', function(event) {
-                    event.preventDefault();  // 阻止表单的默认提交行为
-
-                    const formData = new FormData(this);
-                    const action = formData.get('rewardAction');
-                    const actionDate = formData.get('actionDate');
-
-                    console.log('Selected reward action:', action);  // 添加调试日志
-                    console.log('Selected date:', actionDate);  // 添加调试日志
-
-                    fetch('/api/handle_action', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({ actionType: 'reward', action: action, actionDate: actionDate }).toString(),
-                    })
-                    .then(response => {
-                        console.log('Response status:', response.status);  // 添加调试日志
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Received data:', data);  // 添加调试日志
-                        // 更新页面内容
-                        // 确保在DOM加载完成后执行
-                        $('#currentLevel').text(data.current_level);
-                        $('#currentSubLevel').text(data.current_sub_level);
-                        $('#currentPoints').text(data.current_points);
-
-                        // 显示成功提示浮框
-                        $('#alertBox').show().delay(3000).fadeOut();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);  // 添加调试日志
-                    });
+                    handleFormSubmit(event, 'reward');
                 });
 
                 // 添加事件监听器以处理惩罚行为表单提交
                 document.getElementById('punishmentForm').addEventListener('submit', function(event) {
-                    event.preventDefault();  // 阻止表单的默认提交行为
-
-                    const formData = new FormData(this);
-                    const action = formData.get('punishmentAction');
-                    const actionDate = formData.get('actionDate');
-
-                    console.log('Selected punishment action:', action);  // 添加调试日志
-                    console.log('Selected date:', actionDate);  // 添加调试日志
-
-                    fetch('/api/handle_action', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({ actionType: 'punishment', action: action, actionDate: actionDate }).toString(),
-                    })
-                    .then(response => {
-                        console.log('Response status:', response.status);  // 添加调试日志
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Received data:', data);  // 添加调试日志
-                        // 更新页面内容
-                        // 确保在DOM加载完成后执行
-                        $('#currentLevel').text(data.current_level);
-                        $('#currentSubLevel').text(data.current_sub_level);
-                        $('#currentPoints').text(data.current_points);
-
-                        // 显示成功提示浮框
-                        $('#alertBox').show().delay(3000).fadeOut();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);  // 添加调试日志
-                    });
+                    handleFormSubmit(event, 'punishment');
+                });
+                // 添加事件监听器以处理兑换行为表单提交
+                document.getElementById('exchangeForm').addEventListener('submit', function(event) {
+                    handleFormSubmit(event, 'exchange');
                 });
             });
+
+            function handleFormSubmit(event, actionType) {
+                event.preventDefault();  // 阻止表单的默认提交行为
+
+                const formData = new FormData(event.target);
+                if (actionType === 'exchange') {
+                    actionTypeId = 'exchangeAction';
+                } else if (actionType === 'punishment') {
+                    actionTypeId = 'punishmentAction';
+                } else if (actionType === 'exchange') {
+                    actionTypeId = 'exchangeAction';
+                }else {
+                    actionTypeId = 'rewardAction';
+                }
+                const action = formData.get(actionTypeId);
+                const actionDate = $('#actionDate').val();
+
+                console.log(`Selected ${actionType} action:`, action);  // 添加调试日志
+                console.log('Selected date:', actionDate);  // 添加调试日志
+
+                fetch('/api/handle_action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ actionType: actionType, action: action, actionDate: actionDate }).toString(),
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);  // 添加调试日志
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);  // 添加调试日志
+
+                    // 显示成功提示浮框
+                    if (data.result === 'ok') {
+                        $('#alertOkBox').show().delay(3000).fadeOut();
+                    } else {
+                        $('#alertErrorBox').show().delay(3000).fadeOut();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);  // 添加调试日志
+                });
+            }
 
             document.addEventListener('DOMContentLoaded', function() {
                 fetch('/api/reward_actions')
@@ -174,6 +160,7 @@
                     .then(data => {
                         rewardActions = data.rewardActions;
                         punishmentActions = data.punishmentActions;
+                        exchangeActions = data.exchangeActions;
                         const rewardActionElement = document.getElementById('rewardAction');
                         rewardActions.forEach(action => {
                             const option = document.createElement('option');
@@ -190,8 +177,16 @@
                             option.textContent = action.text;
                             punishmentActionElement.appendChild(option);
                         });
+                        const exchangeActionElement = document.getElementById('exchangeAction');
+                        exchangeActions.forEach(action => {
+                            const option = document.createElement('option');
+                            // option.value = action.value;
+                            option.value = action.text;
+                            option.textContent = action.text;
+                            exchangeActionElement.appendChild(option);
+                        });
                     })
-                    .catch(error => console.error('Error fetching reward actions:', error));
+                    .catch(error => console.error('Error fetching actions:', error));
             });
         </script>
     </div>

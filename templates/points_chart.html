@@ -13,7 +13,14 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    {% include 'navbar.html' %}
+    <div id="navbar-container">
+        <!-- 导航栏将根据 isAdmin 变量动态加载 -->
+        {% if isadmin %}
+            {% include 'navbar_admin.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    </div>
     <div class="container mt-4">
         <h1>积分变化折线图</h1>
         <ul class="nav nav-tabs" id="myTab" role="tablist">

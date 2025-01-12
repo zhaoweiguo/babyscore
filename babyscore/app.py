@@ -39,7 +39,10 @@ system = LearningSystem(session)
 
 @app.route("/", methods=['GET'])
 def show_status():
-    return render_template("status.html")
+    admin_param = request.args.get('isadmin', default='false').lower()
+    isadmin = admin_param == 'true' or admin_param == '1'
+
+    return render_template('status.html', isadmin=isadmin)
 
 @app.route("/action_logs", methods=['GET'])
 def show_action_logs():
@@ -58,7 +61,10 @@ def show_settings():
 
 @app.route("/points_chart", methods=['GET'])
 def show_points_chart():
-    return render_template("points_chart.html")
+    admin_param = request.args.get('isadmin', default='false').lower()
+    isadmin = admin_param == 'true' or admin_param == '1'
+
+    return render_template('points_chart.html', isadmin=isadmin)
 
 
 
@@ -72,9 +78,12 @@ def get_status():
         "current_sub_level": current_status["current_sub_level"],
         "current_total_points": current_status["current_total_points"],
         "current_reward_points": current_status["current_reward_points"],
-        "current_punishment_points": current_status["current_punishment_points"]
+        "current_punishment_points": current_status["current_punishment_points"],
+        "current_exchange_points": current_status["current_exchange_points"],
+        "current_canExchange_points": current_status["current_canExchange_points"]
     })
 
+# 执行行动
 @app.route("/api/handle_action", methods=['POST'])
 def handle_action():
     # 使用全局的 LearningSystem 实例
@@ -110,7 +119,8 @@ def get_action_logs():
     # 将查询结果转换为JSON格式，timestamp转换为YYYY-MM-DD格式
     logs = [{
             'id': log.id,
-            'behavior': log.behavior, 
+            'behavior': log.behavior,
+            'score_type': log.score_type,
             'points_change': log.points_change, 
             'timestamp': log.timestamp.strftime("%Y-%m-%d")
         } for log in action_logs]
@@ -134,6 +144,7 @@ def get_actions():
     actions = config.ACTIONS
     rewardActions = []
     punishmentActions = []
+    exchangeActions = []
     for k, v in actions.items():
         action_type, score = v
         item = {"value": score, "text": k}
@@ -141,9 +152,12 @@ def get_actions():
             punishmentActions.append(item)
         elif action_type=="reward":
             rewardActions.append(item)
+        elif action_type=="exchange":
+            exchangeActions.append(item)
     return jsonify({
         "rewardActions": rewardActions,
-        "punishmentActions": punishmentActions
+        "punishmentActions": punishmentActions,
+        "exchangeActions": exchangeActions
     })
 
 

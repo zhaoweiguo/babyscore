@@ -9,18 +9,21 @@ class ActionLogService:
 
     # 查询数据总和
     def get_sum_from_db(self):
-        total_points = self.session.query(func.sum(ActionLog.points_change)).scalar()
+        total_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type != 'exchange').scalar()
         reward_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type == 'reward').scalar()
         punishment_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type == 'punishment').scalar()
+        exchange_points = self.session.query(func.sum(ActionLog.points_change)).filter(ActionLog.score_type == 'exchange').scalar()
 
         total_points = total_points or 0
         reward_points = reward_points or 0
         punishment_points = punishment_points or 0
+        exchange_points = exchange_points or 0
 
         return {
             "total_points": total_points,
             "reward_points": reward_points,
-            "punishment_points": punishment_points
+            "punishment_points": punishment_points,
+            "exchange_points": exchange_points
         }
         
     # 查询全部数据
@@ -29,7 +32,8 @@ class ActionLogService:
         return [
             {
                 'behavior': log.behavior, 
-                'points_change': log.points_change, 
+                'points_change': log.points_change,
+                'score_type': log.score_type,
                 'timestamp': log.timestamp
             } for log in action_logs
         ]
