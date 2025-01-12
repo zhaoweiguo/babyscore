@@ -11,21 +11,37 @@
 <body>
     {% include 'navbar.html' %}
     <h1>行为日志</h1>
-    <ul id="actionLogs">
+    <!-- 删除: <ul id="actionLogs">
         <!-- 行为日志将通过API动态插入 -->
-    </ul>
+    <!-- 删除: </ul> -->
+    <table id="actionLogsTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>行为</th>
+                <th>积分变化</th>
+                <th>时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 行为日志将通过API动态插入 -->
+        </tbody>
+    </table>
     <script src="/static/js/jquery-3.5.1.min.js"></script>
     <script>
         $(document).ready(function() {
             // 请求 /get_action_logs 接口获取数据
             $.getJSON('/api/get_action_logs/', function(data) {
                 console.log("获取行为日志成功", data);
-                const actionLogsList = document.getElementById('actionLogs');
-                actionLogsList.innerHTML = '';  // 清空现有日志
+                const actionLogsTableBody = document.querySelector('#actionLogsTable tbody');
+                actionLogsTableBody.innerHTML = '';  // 清空现有日志
                 data.forEach(log => {
-                    const li = document.createElement('li');
-                    li.textContent = `行为: ${log.behavior}, 积分变化: ${log.points_change}, 时间: ${log.timestamp}`;
-                    actionLogsList.appendChild(li);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${log.behavior}</td>
+                        <td>${log.points_change}</td>
+                        <td>${log.timestamp}</td>
+                    `;
+                    actionLogsTableBody.appendChild(tr);
                 });
             });
         });

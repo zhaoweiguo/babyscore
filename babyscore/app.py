@@ -2,7 +2,7 @@ import os  # 添加导入os模块
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timezone, timedelta  # 添加 timezone 和 timedelta 导入
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 
 from babyscore.models import ActionLog, Session, engine
@@ -97,12 +97,16 @@ def get_points_data():
 
 @app.route("/api/get_action_logs/", methods=['GET'])
 def get_action_logs():
-    # 查询ActionLog表中的数据
-    action_logs = session.query(ActionLog).order_by(ActionLog.timestamp).all()
+    # 查询ActionLog表中的数据，按时间倒序
+    action_logs = session.query(ActionLog).order_by(desc(ActionLog.timestamp)).all()
     log.debug(f"Action logs: {action_logs}")
     
-    # 将查询结果转换为JSON格式
-    logs = [{'behavior': log.behavior, 'points_change': log.points_change, 'timestamp': log.timestamp.isoformat()} for log in action_logs]
+    # 将查询结果转换为JSON格式，timestamp转换为YYYY-MM-DD格式
+    logs = [{
+            'behavior': log.behavior, 
+            'points_change': log.points_change, 
+            'timestamp': log.timestamp.strftime("%Y-%m-%d")
+        } for log in action_logs]
     return jsonify(logs)
 
 
