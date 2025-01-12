@@ -80,7 +80,7 @@ def get_status():
         "current_reward_points": current_status["current_reward_points"],
         "current_punishment_points": current_status["current_punishment_points"],
         "current_exchange_points": current_status["current_exchange_points"],
-        "current_canExchange_points": current_status["current_canExchange_points"]
+        "current_can_exchange_points": current_status["current_canExchange_points"]
     })
 
 # 执行行动
