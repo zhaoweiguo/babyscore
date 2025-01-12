@@ -30,11 +30,12 @@ class LearningSystem:
         self.service_action_log = ActionLogService(session)
 
 
-        self.current_level = "小小孩"
+        self.current_level = "小大人"
         self.current_sub_level = "非常初级的"
-        self.sub_level_points = 100
+        self.sub_level_points = 1000
 
         self.points_list = self.service_action_log.get_sum_from_db()
+
         self.current_points = self.points_list['total_points']
         self.current_reward_points = self.points_list['reward_points']
         self.current_punishment_points = self.points_list['punishment_points']
@@ -50,7 +51,9 @@ class LearningSystem:
         return {
             "current_level": self.current_level, 
             "current_sub_level": self.current_sub_level, 
-            "current_points": self.points_list['total_points']
+            "current_total_points": self.current_points,
+            "current_reward_points": self.current_reward_points,
+            "current_punishment_points": self.current_punishment_points
         }
 
     # update 积分

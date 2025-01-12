@@ -13,24 +13,46 @@
 <body>
     {% include 'navbar.html' %}
     <div class="container mt-4">
-        <h1>欢迎来到宝宝积分系统</h1>
+        <h1>欢迎来到<a style="color: rgba(43, 0, 255, 0.83);">赵景舒</a>宝宝积分系统</h1>
         <div class="row">
             <div class="col-md-4">
-                <p>当前等级: <span id="currentLevel"></span></p>
+                <p>当前等级: <span style="color: rgba(255, 0, 0, 0.871);" id="currentLevel"></span></p>
             </div>
             <div class="col-md-4">
-                <p>当前小等级: <span id="currentSubLevel"></span></p>
+                <p>当前小等级: <span style="color: rgba(255, 0, 174, 0.83);" id="currentSubLevel"></span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p>当前等级总积分: <span style="color: rgba(255, 81, 0, 0.83);" id="currentTotalPoints"></span></p>
             </div>
             <div class="col-md-4">
-                <p>当前积分: <span id="currentPoints"></span></p>
+                <p>当前等级奖励总积分: <span style="color: rgba(255, 81, 0, 0.83);" id="currentRewardPoints"></span></p>
+            </div>
+            <div class="col-md-4">
+                <p>当前等级惩罚总积分: <span style="color: rgba(255, 81, 0, 0.83);" id="currentPunishmentPoints"></span></p>
             </div>
         </div>
 
+        <!-- <div class="row mt-4">
+            <div class="col-md-4">
+                <p>可兑换积分: <span style="color: rgba(255, 81, 0, 0.83);" id="currentExchangePoints"></span></p>
+            </div>
+            <div class="col-md-4">
+                <p>已兑换积分: <span style="color: rgba(255, 81, 0, 0.83);" id="currentExchangedPoints"></span></p>
+            </div>
+        </div> -->
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <p>已成长轮数: <span style="color: rgba(255, 81, 0, 0.83);" id="currentEpoch"></span></p>
+            </div>
+        </div>
         <!-- 添加进度条 -->
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="progress">
-                    <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000">
                         0 / 0
                     </div>
                 </div>
@@ -56,11 +78,22 @@
                 console.log("获取数据成功", data)
                 $('#currentLevel').text(data.current_level);
                 $('#currentSubLevel').text(data.current_sub_level);
-                $('#currentPoints').text(data.current_points);
+
+                $('#currentTotalPoints').text(data.current_total_points);
+                $('#currentPunishmentPoints').text(data.current_punishment_points);
+                $('#currentRewardPoints').text(data.current_reward_points);
+
+                
                 // 更新进度条
                 var progressBar = $('#progressBar');
-                var totalPoints = 100; // 假设总积分是100
-                var currentPoints = parseInt(data.current_points);
+                var totalPoints = 1000; // 假设总积分是100
+                var currentPoints = parseInt(data.current_total_points);
+
+                // 除1000取余后作为进度百分比
+                epoch = parseInt(currentPoints/totalPoints);
+                $('#currentEpoch').text(epoch);
+                currentPoints = currentPoints % totalPoints;
+
                 var progressPercentage = (currentPoints / totalPoints) * 100;
                 progressBar.css('width', progressPercentage + '%');
                 progressBar.text(currentPoints + ' / ' + totalPoints);

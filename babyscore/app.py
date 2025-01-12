@@ -59,14 +59,13 @@ def show_points_chart():
 def get_status():
     # 使用全局的 LearningSystem 实例
     current_status = system.get_current_status()
-    current_level = current_status["current_level"]
-    current_sub_level = current_status["current_sub_level"]
-    current_points = current_status["current_points"]
 
     return jsonify({
-        "current_level": current_level,
-        "current_sub_level": current_sub_level,
-        "current_points": current_points
+        "current_level": current_status["current_level"],
+        "current_sub_level": current_status["current_sub_level"],
+        "current_total_points": current_status["current_total_points"],
+        "current_reward_points": current_status["current_reward_points"],
+        "current_punishment_points": current_status["current_punishment_points"]
     })
 
 @app.route("/api/handle_action", methods=['POST'])
