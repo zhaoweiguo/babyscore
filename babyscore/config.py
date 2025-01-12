@@ -37,6 +37,9 @@ ACTIONS = {
     "品德：打人、骂人3": ("punishment", -3),
     "品德：说谎、没礼貌、乱发脾气3": ("punishment", -3),
     "品德：和妹妹打架5": ("punishment", -5),
+    
+    
+    
 }
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///babyscore.db')

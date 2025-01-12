@@ -23,6 +23,10 @@
     <div class="container mt-4">
         <h1>设置</h1>
 
+        <div class="form-group">
+            <label for="actionDate">选择日期:</label>
+            <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
+        </div>
         <!-- 添加标签页导航 -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -31,15 +35,14 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="punishment-tab" data-toggle="tab" data-target="#punishment" type="button" role="tab" aria-controls="punishment" aria-selected="false">惩罚行为</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="exchange-tab" data-toggle="tab" data-target="#exchange" type="button" role="tab" aria-controls="exchange" aria-selected="false">兑换行为</button>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <!-- 奖励行为标签页 -->
             <div class="tab-pane fade show active" id="reward" role="tabpanel" aria-labelledby="reward-tab">
                 <form id="rewardForm">
-                    <div class="form-group">
-                        <label for="actionDate">选择日期:</label>
-                        <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
-                    </div>
                     <div class="form-group">
                         <label for="rewardAction">选择奖励行为:</label>
                         <select name="rewardAction" id="rewardAction" class="form-control">
@@ -53,16 +56,24 @@
             <div class="tab-pane fade" id="punishment" role="tabpanel" aria-labelledby="punishment-tab">
                 <form id="punishmentForm">
                     <div class="form-group">
-                        <label for="actionDate">选择日期:</label>
-                        <input type="date" name="actionDate" id="actionDate" class="form-control" value="{{ today }}">
-                    </div>
-                    <div class="form-group">
                         <label for="rewardAction">选择惩罚行为:</label>
                         <select name="punishmentAction" id="punishmentAction" class="form-control">
 
                         </select>
                     </div>
                     <button type="submit" class="btn btn-danger">惩罚行为</button>
+                </form>
+            </div>
+            <!-- 兑换行为标签页 -->
+            <div class="tab-pane fade" id="exchange" role="tabpanel" aria-labelledby="exchange-tab">
+                <form id="exchangeForm">
+                    <div class="form-group">
+                        <label for="rewardAction">选择兑换行为:</label>
+                        <select name="exchangeAction" id="exchangeAction" class="form-control">
+
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-danger">兑换行为</button>
                 </form>
             </div>
         </div>
