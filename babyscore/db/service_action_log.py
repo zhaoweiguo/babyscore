@@ -28,11 +28,11 @@ class ActionLogService:
             }
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
             return {}
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
             return {}
 
         
@@ -50,11 +50,11 @@ class ActionLogService:
             ]
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
             return []
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
             return []
 
 
@@ -68,10 +68,10 @@ class ActionLogService:
             self.session.commit()
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
 
 
     def get_points_data(self, group_by='all', time_unit='day'):
@@ -80,11 +80,11 @@ class ActionLogService:
             return action_logs
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
             return []
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
             return []
 
 
@@ -95,11 +95,11 @@ class ActionLogService:
             return action_logs
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
             return []
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
             return []
 
     def delete_action_log(self, id):
@@ -111,11 +111,11 @@ class ActionLogService:
                 return True
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
-            session.rollback()  # Reset the session to a usable state
+            self.session.rollback()  # Reset the session to a usable state
             return False
         except Exception as e:
             print(f"------- Exception: {e}")
-            session.rollback()
+            self.session.rollback()
             return False
 
 
