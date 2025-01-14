@@ -79,7 +79,7 @@ def readme():
 
 @app.route("/api/status", methods=['GET'])
 def get_status():
-    # 使用全局的 LearningSystem 实例
+    # 接口：首页当前状态
     current_status = system.get_current_status()
 
     return jsonify({
@@ -139,7 +139,7 @@ def get_actions():
     exchangeActions = []
     for k, v in actions.items():
         action_type, score = v
-        item = {"value": score, "text": k}
+        item = {"value": score, "text": f"{k}({score})"}
         if action_type=="punishment":
             punishmentActions.append(item)
         elif action_type=="reward":

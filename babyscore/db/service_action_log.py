@@ -106,8 +106,8 @@ class ActionLogService:
         try:
             action_log = self.session.query(ActionLog).filter_by(id=id).first()
             if action_log:
-                session.delete(action_log)
-                session.commit()
+                self.session.delete(action_log)
+                self.session.commit()
                 return True
         except exc.SQLAlchemyError as e:
             print(f"------- SQLAlchemyError: {e}")
