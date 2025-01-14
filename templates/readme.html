@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <!-- 引入本地的 Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- 添加完整的 jQuery 库 -->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+
+    <div id="navbar-container">
+        <!-- 导航栏将根据 isAdmin 变量动态加载 -->
+        {% if isadmin %}
+            {% include 'navbar_admin.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    </div>
+
+    <div class="tabs">
+        <button class="tablinks" onclick="openTab(event, 'Rewards')">奖励行为</button>
+        <button class="tablinks" onclick="openTab(event, 'Punishments')">惩罚行为</button>
+        <button class="tablinks" onclick="openTab(event, 'Exchanges')">兑换行为</button>
+    </div>
+
+    <div id="Rewards" class="tabcontent">
+        <h3>奖励行为</h3>
+        <ul>
+            {% for action, (type, value) in ACTIONS.items() if type == 'reward' %}
+                <li>{{ action }}: {{ value }} 分</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="Punishments" class="tabcontent">
+        <h3>惩罚行为</h3>
+        <ul>
+            {% for action, (type, value) in ACTIONS.items() if type == 'punishment' %}
+                <li>{{ action }}: {{ value }} 分</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="Exchanges" class="tabcontent">
+        <h3>兑换行为</h3>
+        <ul>
+            {% for action, (type, value) in ACTIONS.items() if type == 'exchange' %}
+                <li>{{ action }}: {{ value }} 分</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    </script>
+
+</body>

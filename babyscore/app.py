@@ -65,6 +65,16 @@ def show_points_chart():
 
     return render_template('points_chart.html', isadmin=isadmin)
 
+@app.route("/readme", methods=['GET'])
+def show_points_chart():
+    admin_param = request.args.get('isadmin', default='false').lower()
+    isadmin = admin_param == 'true' or admin_param == '1'
+
+    return render_template('readme.html', isadmin=isadmin)
+
+
+
+
 
 
 @app.route("/api/status", methods=['GET'])
@@ -82,10 +92,10 @@ def get_status():
         "current_can_exchange_points": current_status["current_canExchange_points"]
     })
 
-# 执行行动
+
 @app.route("/api/handle_action", methods=['POST'])
 def handle_action():
-    # 使用全局的 LearningSystem 实例
+    """执行行动"""
     actionType = request.form['actionType']  # reward, punishment
     action = request.form['action']
     actionDate = request.form.get('actionDate', datetime.now().strftime('%Y-%m-%d'))  # 获取选择的日期，默认为当前日期
@@ -95,6 +105,7 @@ def handle_action():
 
 @app.route("/api/points_data", methods=['GET'])
 def get_points_data():
+    """行为日志列表折线图"""
     group_by = request.args.get('group_by', "all")
     # 获取 time_unit 参数，默认为 'day'
     time_unit = request.args.get('time_unit', 'day')
@@ -103,14 +114,16 @@ def get_points_data():
 
     return jsonify(grouped_list)
 
+
 @app.route("/api/get_action_logs/", methods=['GET'])
 def get_action_logs():
+    """行为日志列表"""
     logs = system.get_action_logs()
     return jsonify(logs)
 
-# DELETE /api/delete_action_log/
 @app.route("/api/delete_action_log/<int:id>", methods=['DELETE'])
 def delete_action_log(id):
+    """行为日志删除"""
     if system.delete_action_log(id):
         return jsonify({'message': 'Action log deleted successfully'})
     else:
