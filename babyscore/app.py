@@ -98,6 +98,8 @@ def handle_action():
     """执行行动"""
     actionType = request.form['actionType']  # reward, punishment
     action = request.form['action']
+    # 去掉(x)
+    action = action.split('(')[0]
     actionDate = request.form.get('actionDate', datetime.now().strftime('%Y-%m-%d'))  # 获取选择的日期，默认为当前日期
     log.debug(f"Received action: {action}, type: {actionType}, date: {actionDate}")
     result = system.handle_action(actionType, action, actionDate)  # 传递日期参数
