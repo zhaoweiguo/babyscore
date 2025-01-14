@@ -66,7 +66,7 @@ def show_points_chart():
     return render_template('points_chart.html', isadmin=isadmin)
 
 @app.route("/readme", methods=['GET'])
-def show_points_chart():
+def readme():
     admin_param = request.args.get('isadmin', default='false').lower()
     isadmin = admin_param == 'true' or admin_param == '1'
 

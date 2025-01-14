@@ -29,28 +29,20 @@
 
     <div id="Rewards" class="tabcontent">
         <h3>奖励行为</h3>
-        <ul>
-            {% for action, (type, value) in ACTIONS.items() if type == 'reward' %}
-                <li>{{ action }}: {{ value }} 分</li>
-            {% endfor %}
+        <ul id="rewards-list">
+
         </ul>
     </div>
 
     <div id="Punishments" class="tabcontent">
         <h3>惩罚行为</h3>
-        <ul>
-            {% for action, (type, value) in ACTIONS.items() if type == 'punishment' %}
-                <li>{{ action }}: {{ value }} 分</li>
-            {% endfor %}
+        <ul id="punishments-list">
         </ul>
     </div>
 
     <div id="Exchanges" class="tabcontent">
         <h3>兑换行为</h3>
-        <ul>
-            {% for action, (type, value) in ACTIONS.items() if type == 'exchange' %}
-                <li>{{ action }}: {{ value }} 分</li>
-            {% endfor %}
+        <ul id="exchanges-list">
         </ul>
     </div>
 
@@ -67,7 +59,39 @@
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
+
+        // Fetch data from the server
+        $.ajax({
+            url: '/api/reward_actions',
+            method: 'GET',
+            success: function(data) {
+                $('#rewards-list').empty();
+                $('#punishments-list').empty();
+                $('#exchanges-list').empty();
+
+                data.rewardActions.forEach(function(action) {
+                    $('#rewards-list').append('<li>' + action.text + ': ' + action.value + ' 分</li>');
+                });
+
+                data.punishmentActions.forEach(function(action) {
+                    $('#punishments-list').append('<li>' + action.text + ': ' + action.value + ' 分</li>');
+                });
+
+                data.exchangeActions.forEach(function(action) {
+                    $('#exchanges-list').append('<li>' + action.text + ': ' + action.value + ' 分</li>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching actions:', error);
+            }
+        });
     }
+
+    // Initialize the first tab
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('.tablinks').click();
+    });
     </script>
 
 </body>
+</html>
