@@ -36,17 +36,17 @@ class LearningSystem:
         self.current_sub_level = "非常初级的"
         self.sub_level_points = 1000
 
-        self.points_list = self.service_action_log.get_sum_from_db()
+        # self.points_list = self.service_action_log.get_sum_from_db()
 
-        # 当前等级总积分
-        self.current_points = self.points_list['total_points']
-        # 当前奖励积分总数
-        self.current_reward_points = self.points_list['reward_points']
-        # 当前惩罚积分总数
-        self.current_punishment_points = self.points_list['punishment_points']
-        # 当前兑换积分总数
-        self.current_exchange_points = self.points_list['exchange_points']
-        self.current_canExchange_points = self.current_points + self.current_exchange_points
+        # # 当前等级总积分
+        # self.current_points = self.points_list['total_points']
+        # # 当前奖励积分总数
+        # self.current_reward_points = self.points_list['reward_points']
+        # # 当前惩罚积分总数
+        # self.current_punishment_points = self.points_list['punishment_points']
+        # # 当前兑换积分总数
+        # self.current_exchange_points = self.points_list['exchange_points']
+        # self.current_canExchange_points = self.current_points + self.current_exchange_points
 
 
         # self.action_logs = self.service_action_log.get_action_logs_from_db()  # 更新行为日志列表
@@ -57,30 +57,36 @@ class LearningSystem:
 
     # 获取当前等级和小等级
     def get_current_status(self):
+        service_action_log = ActionLogService(self.session)
+        points_list = service_action_log.get_sum_from_db()
+        
         return {
             "current_level": self.current_level, 
             "current_sub_level": self.current_sub_level, 
-            "current_total_points": self.current_points,
-            "current_reward_points": self.current_reward_points,
-            "current_punishment_points": self.current_punishment_points,
-            "current_exchange_points": self.current_exchange_points,
-            "current_canExchange_points": self.current_canExchange_points
+            "current_total_points": points_list['total_points'],
+            "current_reward_points": points_list['reward_points'],
+            "current_punishment_points": points_list['punishment_points'],
+            "current_exchange_points": points_list['exchange_points'],
+            "current_canExchange_points": points_list['total_points'] + points_list['exchange_points']
         }
 
     # update 积分
     def update_points(self, score_type, points):
-        log.info(f"------- update_points: {score_type} {points}")
-        if score_type == "punishment":
-            self.current_points += points
-            self.current_punishment_points += points
-        elif score_type == "reward":
-            self.current_points += points
-            self.current_reward_points += points
-        elif score_type == "exchange":
-            self.current_exchange_points += points
-        else:
-            log.error("Invalid score type")
-            raise ValueError("Invalid score type")
+        # log.info(f"------- update_points: {score_type} {points}")
+        # if score_type == "punishment":
+        #     self.current_points += points
+        #     self.current_punishment_points += points
+        #     self.current_canExchange_points += points
+        # elif score_type == "reward":
+        #     self.current_points += points
+        #     self.current_reward_points += points
+        #     self.current_canExchange_points += points
+        # elif score_type == "exchange":
+        #     self.current_exchange_points += points
+        #     self.current_canExchange_points += points
+        # else:
+        #     log.error("Invalid score type")
+        #     raise ValueError("Invalid score type")
         self.check_level_up()
 
     # 检查是否升级
@@ -96,7 +102,7 @@ class LearningSystem:
 
 
     # 处理行为
-    def handle_action(self, actionType, action, actionDate):
+    def inert_action_log(self, actionType, action, actionDate):
         if actionType == ActionType.reward.name or actionType == ActionType.punishment.name or actionType == ActionType.exchange.name:
             score_type, points = self.actions[action]
             self.update_points(score_type, points)

@@ -128,7 +128,7 @@
                 console.log(`Selected ${actionType} action:`, action);  // 添加调试日志
                 console.log('Selected date:', actionDate);  // 添加调试日志
 
-                fetch('/api/handle_action', {
+                fetch('/api/inert_action_log', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
