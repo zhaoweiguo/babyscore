@@ -6,6 +6,7 @@ from babyscore.logger import log
 from babyscore.config import ACTIONS  # 从config.py中导入行为及其对应的积分变化
 from babyscore.models import ActionLog  # 添加对模型的导入
 from babyscore.db.service_action_log import ActionLogService
+from babyscore import util_point_chart
 
 
 
@@ -106,6 +107,36 @@ class LearningSystem:
             return {"result": "error"}
         return {"result": "ok"}
 
+    def get_points_data(self, group_by, time_unit):
+        # 使用全局的 LearningSystem 实例
+        action_logs = self.service_action_log.get_points_data(group_by, time_unit)
+        # 默认按总积分计算
+        if group_by == 'all':
+            grouped_list = util_point_chart.group_by_time_unit(action_logs, time_unit)
+            return grouped_list
+        # 根据score_type参数进行分组
+        # @todo
+        return []
+
+
+    def get_action_logs(self):
+    # 查询ActionLog表中的数据，按时间倒序
+        action_logs = self.service_action_log.get_action_logs()
+        log.debug(f"Action logs: {action_logs}")
+        
+        # 将查询结果转换为JSON格式，timestamp转换为YYYY-MM-DD格式
+        logs = [{
+                'id': log.id,
+                'behavior': log.behavior,
+                'score_type': log.score_type,
+                'points_change': log.points_change, 
+                'timestamp': log.timestamp.strftime("%Y-%m-%d")
+            } for log in action_logs]
+        return logs
+
+
+    def delete_action_log(self, id):
+        return self.service_action_log.delete_action_log(id)
 
 
 
